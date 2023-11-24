@@ -9,5 +9,8 @@ authRouter.post('/register', validatorMiddleware(AuthSchema.register), AuthContr
 authRouter.post('/login', validatorMiddleware(AuthSchema.login), AuthController.login)
 authRouter.post('/verify', AuthController.verifyOtp)
 authRouter.post('/resend-otp', AuthController.resendOtp)
-
+authRouter.post('/forgot-password', AuthController.forgotPassword)
+authRouter.post('/resend-forgot-token', AuthController.resendForgotToken)
+authRouter.post('/verify-token', AuthController.verifyForgotToken)
+authRouter.post('/reset-password', AuthController.resetPassword)
 module.exports = authRouter

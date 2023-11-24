@@ -5,8 +5,8 @@ const connectToMysql = async () => {
     try {
         await sequelize.authenticate()
         console.log('Connected mysql successfully')
-    } catch (error) {
-        console.error('Failed to connect mysql', error)
+    } catch (err) {
+        console.log('Failed to connect mysql')
     }
 }
 
@@ -14,8 +14,8 @@ const connectToMongo = async () => {
     try {
         await connectMongo()
         console.log('Connected mongo successfully!')
-    } catch (error) {
-        console.error('Failed to connect mongo', error)
+    } catch (err) {
+        console.log('Failed to connect mongo')
     }
 }
 connectToMysql()

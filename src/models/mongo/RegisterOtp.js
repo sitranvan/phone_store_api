@@ -20,4 +20,4 @@ const RegisterOtp = new mongoose.Schema(
 
 RegisterOtp.index({ createdAt: 1 }, { expireAfterSeconds: env.EXPIRE_AFTER_SECONDS })
 
-module.exports = mongoose.model('register_otps', RegisterOtp)
+module.exports = mongoose.model('register_otp', RegisterOtp)

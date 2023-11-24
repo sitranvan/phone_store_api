@@ -2,6 +2,7 @@ require('dotenv').config()
 
 exports.env = {
     PORT: process.env.PORT || 3000,
+    CLIENT_URL: process.env.CLIENT_URL || 'https://localhost:3000',
     EXPIRED_IN: process.env.EXPIRED_IN || 86400,
     SECRET_KEY: process.env.SECRET_KEY || 'stv6302',
     EXPIRE_AFTER_SECONDS: process.env.EXPIRE_AFTER_SECONDS || 900,
