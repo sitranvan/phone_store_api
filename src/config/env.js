@@ -9,6 +9,7 @@ module.exports = {
     MONGO_USERNAME: process.env.MONGO_USERNAME,
     MONGO_PASSWORD: process.env.MONGO_PASSWORD,
 
+    SEQUELIZE_DIALECT: process.env.SEQUELIZE_DIALECT || 'mysql',
     MYSQL_HOST: process.env.MYSQL_HOST || 'localhost',
     MYSQL_PORT: process.env.MYSQL_PORT || 3306,
     MYSQL_USER: process.env.MYSQL_USER || 'root',
