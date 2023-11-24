@@ -7,5 +7,7 @@ const authRouter = Router()
 
 authRouter.post('/register', validatorMiddleware(AuthSchema.register), AuthController.register)
 authRouter.post('/login', validatorMiddleware(AuthSchema.login), AuthController.login)
+authRouter.post('/verify', AuthController.verifyOtp)
+authRouter.post('/resend-otp', AuthController.resendOtp)
 
 module.exports = authRouter

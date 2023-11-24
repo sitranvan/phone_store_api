@@ -1,8 +1,8 @@
 const express = require('express')
-const env = require('./config/env')
 const morgan = require('morgan')
 const handleRouters = require('./routes')
 const errorMiddleware = require('./middlewares/errorMiddleware')
+const { env } = require('./config/env')
 const app = express()
 
 app.use(express.json())
