@@ -2,7 +2,8 @@ require('dotenv').config()
 
 module.exports = {
     PORT: process.env.PORT || 3000,
-    SECRET_KEY: process.env.SECRET_KEY || 'st6302',
+    EXPIRED_IN: process.env.EXPIRED_IN || 86400,
+    SECRET_KEY: process.env.SECRET_KEY || 'stv6302',
     MONGO_HOST: process.env.MONGO_HOST || 'localhost',
     MONGO_PORT: process.env.MONGO_PORT || 27017,
     MONGO_DATABASE: process.env.MONGO_DATABASE,
