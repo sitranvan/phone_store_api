@@ -1,7 +1,6 @@
 // property => req.body
 const validatorMiddleware = (schema, property = 'body') => {
     return (req, res, next) => {
-        console.log(schema)
         const { error } = schema.validate(req[property])
         if (!error) {
             next()
