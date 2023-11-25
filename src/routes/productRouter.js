@@ -24,4 +24,6 @@ productRouter.patch(
     ProductController.updateProduct
 )
 
+productRouter.delete('/:id', jwtAuthMiddleware, authorizedMiddleware('owner'), ProductController.deleteProduct)
+
 module.exports = productRouter

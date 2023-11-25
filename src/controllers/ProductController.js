@@ -109,6 +109,26 @@ class ProductController {
             next(err)
         }
     }
+
+    async deleteProduct(req, res, next) {
+        try {
+            const { id: productId } = req.params
+            const product = await Product.findByPk(productId)
+
+            if (!product) {
+                throw new ErrorResponse(404, 'Không tìm thấy sản phẩm')
+            }
+
+            await product.destroy()
+
+            return new SuccessResponse(res, {
+                status: 200,
+                data: product
+            })
+        } catch (err) {
+            next(err)
+        }
+    }
 }
 
 module.exports = new ProductController()
