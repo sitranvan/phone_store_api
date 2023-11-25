@@ -21,7 +21,7 @@ class UserController {
                     }
                 ]
             })
-            res.status(200).json({
+            return new SuccessResponse(res, {
                 success: true,
                 data: user
             })
