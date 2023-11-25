@@ -1,8 +1,10 @@
 class SuccessResponse {
-    constructor(res, { status = 200, message = '', data = null }) {
+    constructor(res, { status = 200, message = null, data = null }) {
         const responseObj = {
-            success: true,
-            message
+            success: true
+        }
+        if (message !== null) {
+            responseObj.message = message
         }
 
         if (data !== null) {

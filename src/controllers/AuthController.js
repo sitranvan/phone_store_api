@@ -85,7 +85,8 @@ class AuthController {
                 },
                 env.SECRET_KEY,
                 {
-                    expiresIn: env.EXPIRED_IN
+                    // expiresIn 1 days
+                    expiresIn: '1d'
                 }
             )
             return new SuccessResponse(res, {
