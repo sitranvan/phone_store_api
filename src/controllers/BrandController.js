@@ -52,6 +52,27 @@ class BrandController {
             next(err)
         }
     }
+    async deleteBrand(req, res, next) {
+        try {
+            const { id } = req.params
+            const brand = await Brand.findOne({
+                where: {
+                    id
+                }
+            })
+            if (!brand) {
+                throw new ErrorResponse(404, 'Không tìm thấy thương hiệu')
+            }
+            await brand.destroy()
+
+            return new SuccessResponse(res, {
+                status: 200,
+                message: 'Xóa thương hiệu thành công'
+            })
+        } catch (err) {
+            next(err)
+        }
+    }
 }
 
 module.exports = new BrandController()

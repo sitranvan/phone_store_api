@@ -24,4 +24,6 @@ brandRouter.patch(
     authorizedMiddleware('owner'),
     BrandController.updateBrand
 )
+
+brandRouter.delete('/:id', jwtAuthMiddleware, authorizedMiddleware('owner'), BrandController.deleteBrand)
 module.exports = brandRouter
