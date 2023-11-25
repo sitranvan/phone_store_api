@@ -15,5 +15,12 @@ categoryRouter.post(
     authorizedMiddleware('owner'),
     CategoryController.createCategory
 )
+categoryRouter.patch(
+    '/:id',
+    validatorMiddleware(CategorySchema.updateCategory),
+    jwtAuthMiddleware,
+    authorizedMiddleware('owner'),
+    CategoryController.updateCategory
+)
 
 module.exports = categoryRouter

@@ -1,4 +1,5 @@
 const Category = require('../models/Category')
+const ErrorResponse = require('../response/ErrorResponse')
 const SuccessResponse = require('../response/SuccessResponse')
 
 class CategoryController {
@@ -22,6 +23,30 @@ class CategoryController {
             return new SuccessResponse(res, {
                 status: 201,
                 message: 'Tạo danh mục thành công'
+            })
+        } catch (err) {
+            next(err)
+        }
+    }
+
+    async updateCategory(req, res, next) {
+        try {
+            const { name } = req.body
+            const { id } = req.params
+            const category = await Category.findOne({
+                where: {
+                    id
+                }
+            })
+            if (!category) {
+                throw new ErrorResponse(404, 'Không tìm thấy danh mục')
+            }
+            category.name = name
+            await category.save()
+
+            return new SuccessResponse(res, {
+                status: 200,
+                message: 'Cập nhật danh mục thành công'
             })
         } catch (err) {
             next(err)
