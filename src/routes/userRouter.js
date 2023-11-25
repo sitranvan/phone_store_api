@@ -12,8 +12,8 @@ userRouter.patch(
     '/update',
     // form-data không validation được
     // validatorMiddleware(UserSchema.updateMe),
-    uploadMiddleware.single('avatar'),
     jwtAuthMiddleware,
+    uploadMiddleware.single('avatar'),
     UserController.updateMe
 )
 

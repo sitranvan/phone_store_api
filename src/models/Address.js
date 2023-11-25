@@ -11,19 +11,23 @@ const Address = sequelize.define(
         },
         province: {
             type: DataTypes.STRING,
-            allowNull: true
+            allowNull: true,
+            defaultValue: null
         },
         district: {
             type: DataTypes.STRING,
-            allowNull: true
+            allowNull: true,
+            defaultValue: null
         },
         village: {
             type: DataTypes.STRING,
-            allowNull: true
+            allowNull: true,
+            defaultValue: null
         },
         shortDescription: {
             type: DataTypes.STRING,
-            allowNull: true
+            allowNull: true,
+            defaultValue: null
         },
         userId: {
             type: DataTypes.INTEGER,
