@@ -11,6 +11,7 @@ Address.belongsTo(User, {
     foreignKey: 'userId'
 })
 
+// User-Role
 User.belongsTo(Role, {
     foreignKey: 'role',
     as: 'roles'

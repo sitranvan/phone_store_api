@@ -12,18 +12,21 @@ module.exports = {
          *   isBetaMember: false
          * }], {});
          */
-        await queryInterface.bulkInsert('roles', [
+        await queryInterface.bulkInsert('categories', [
             {
-                name: 'Admin',
-                slug: 'admin'
+                name: 'Điện thoại phổ thông',
+                createdAt: new Date(),
+                updatedAt: new Date()
             },
             {
-                name: 'Owner',
-                slug: 'owner'
+                name: 'Android',
+                createdAt: new Date(),
+                updatedAt: new Date()
             },
             {
-                name: 'Customer',
-                slug: 'customer'
+                name: 'Apple (iOS)',
+                createdAt: new Date(),
+                updatedAt: new Date()
             }
         ])
     },
@@ -35,6 +38,6 @@ module.exports = {
          * Example:
          * await queryInterface.bulkDelete('People', null, {});
          */
-        await queryInterface.bulkDelete('roles', null, {})
+        await queryInterface.bulkDelete('categories', null, {})
     }
 }
