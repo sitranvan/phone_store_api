@@ -17,4 +17,11 @@ userRouter.patch(
     UserController.updateMe
 )
 
+userRouter.patch(
+    '/update-password',
+    validatorMiddleware(UserSchema.updatePassword),
+    jwtAuthMiddleware,
+    UserController.updatePassword
+)
+
 module.exports = userRouter

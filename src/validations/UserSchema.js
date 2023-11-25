@@ -20,6 +20,21 @@ class UserSchema {
             })
         })
     }
+
+    get updatePassword() {
+        return Joi.object({
+            oldPassword: Joi.string().required().messages({
+                'string.base': 'Mật khẩu cũ phải là chuỗi',
+                'string.empty': 'Mật khẩu cũ không được để trống',
+                'any.required': 'Mật khẩu cũ là trường bắt buộc'
+            }),
+            newPassword: Joi.string().required().messages({
+                'string.base': 'Mật khẩu mới phải là chuỗi',
+                'string.empty': 'Mật khẩu mới không được để trống',
+                'any.required': 'Mật khẩu mới là trường bắt buộc'
+            })
+        })
+    }
 }
 
 module.exports = new UserSchema()

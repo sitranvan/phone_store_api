@@ -1,3 +1,4 @@
+const bcrypt = require('bcryptjs')
 const Address = require('../models/Address')
 const User = require('../models/User')
 const ErrorResponse = require('../response/ErrorResponse')
@@ -74,6 +75,35 @@ class UserController {
             return new SuccessResponse(res, {
                 status: 200,
                 message: 'Cập nhật thông tin thành công'
+            })
+        } catch (err) {
+            next(err)
+        }
+    }
+
+    async updatePassword(req, res, next) {
+        try {
+            const { id: userId } = req.user
+            const { oldPassword, newPassword } = req.body
+
+            const user = await User.findByPk(userId)
+            const isMatch = bcrypt.compareSync(oldPassword, user.password)
+
+            if (!isMatch) {
+                throw new ErrorResponse(400, 'Mật khẩu cũ không chính xác')
+            }
+            if (oldPassword === newPassword) {
+                throw new ErrorResponse(400, 'Mật khẩu mới phải khác mật khẩu cũ')
+            }
+
+            const hashedPassword = bcrypt.hashSync(newPassword)
+
+            user.password = hashedPassword
+            await user.save()
+
+            return new SuccessResponse(res, {
+                status: 200,
+                message: 'Cập nhật mật khẩu thành công'
             })
         } catch (err) {
             next(err)
