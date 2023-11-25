@@ -30,6 +30,10 @@ module.exports = {
                 type: DataTypes.STRING,
                 allowNull: false
             },
+            avatar: {
+                type: DataTypes.STRING,
+                allowNull: true
+            },
             verified: {
                 type: DataTypes.BOOLEAN,
                 allowNull: false,

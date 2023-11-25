@@ -19,19 +19,19 @@ module.exports = {
             },
             province: {
                 type: DataTypes.STRING,
-                allowNull: false
+                allowNull: true
             },
             district: {
                 type: DataTypes.STRING,
-                allowNull: false
+                allowNull: true
             },
             village: {
                 type: DataTypes.STRING,
-                allowNull: false
+                allowNull: true
             },
             shortDescription: {
                 type: DataTypes.STRING,
-                allowNull: false
+                allowNull: true
             },
             userId: {
                 type: DataTypes.INTEGER,

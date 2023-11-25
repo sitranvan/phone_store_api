@@ -18,6 +18,10 @@ module.exports = {
                 slug: 'admin'
             },
             {
+                name: 'Owner',
+                slug: 'owner'
+            },
+            {
                 name: 'Customer',
                 slug: 'customer'
             }
