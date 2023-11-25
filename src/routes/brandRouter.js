@@ -16,4 +16,12 @@ brandRouter.post(
     authorizedMiddleware('owner'),
     BrandController.createBrand
 )
+
+brandRouter.patch(
+    '/:id',
+    validatorMiddleware(BrandSchema.updateBrand),
+    jwtAuthMiddleware,
+    authorizedMiddleware('owner'),
+    BrandController.updateBrand
+)
 module.exports = brandRouter
