@@ -23,4 +23,6 @@ categoryRouter.patch(
     CategoryController.updateCategory
 )
 
+categoryRouter.delete('/:id', jwtAuthMiddleware, authorizedMiddleware('owner'), CategoryController.deleteCategory)
+
 module.exports = categoryRouter

@@ -52,6 +52,28 @@ class CategoryController {
             next(err)
         }
     }
+
+    async deleteCategory(req, res, next) {
+        try {
+            const { id } = req.params
+            const category = await Category.findOne({
+                where: {
+                    id
+                }
+            })
+            if (!category) {
+                throw new ErrorResponse(404, 'Không tìm thấy danh mục')
+            }
+            await category.destroy()
+
+            return new SuccessResponse(res, {
+                status: 200,
+                message: 'Xóa danh mục thành công'
+            })
+        } catch (err) {
+            next(err)
+        }
+    }
 }
 
 module.exports = new CategoryController()
