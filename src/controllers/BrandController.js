@@ -15,6 +15,19 @@ class BrandController {
             next(err)
         }
     }
+
+    async createBrand(req, res, next) {
+        try {
+            await Brand.create(req.body)
+
+            return new SuccessResponse(res, {
+                status: 201,
+                message: 'Tạo thương hiệu thành công'
+            })
+        } catch (err) {
+            next(err)
+        }
+    }
 }
 
 module.exports = new BrandController()
