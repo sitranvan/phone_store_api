@@ -24,6 +24,8 @@ exports.env = {
     GOOGLE_REFRESH_TOKEN: process.env.GOOGLE_REFRESH_TOKEN || 'stv6302',
     GOOGLE_TEST_EMAIL: process.env.GOOGLE_TEST_EMAIL || 'test@gmail.com',
 
+    FILE_LIMIT: process.env.FILE_LIMIT || 5, // 5MB
+
     getMongoUri() {
         return this.MONGO_USERNAME && this.MONGO_PASSWORD
             ? `mongodb://${this.MONGO_USERNAME}:${this.MONGO_PASSWORD}@${this.MONGO_HOST}:${this.MONGO_PORT}/${this.MONGO_DATABASE}?authSource=admin`
