@@ -60,6 +60,55 @@ class ProductController {
             next(err)
         }
     }
+
+    async createProduct(req, res, next) {
+        try {
+            const { name, description, price, categoryId, brandId } = req.body
+
+            const product = await Product.create({
+                name,
+                description,
+                photo: req.file.filename,
+                price,
+                categoryId,
+                brandId
+            })
+
+            return new SuccessResponse(res, {
+                status: 201,
+                data: product
+            })
+        } catch (err) {
+            next(err)
+        }
+    }
+    async updateProduct(req, res, next) {
+        try {
+            const { name, description, price, categoryId, brandId } = req.body
+            const { id: productId } = req.params
+            const product = await Product.findByPk(productId)
+
+            if (!product) {
+                throw new ErrorResponse(404, 'Không tìm thấy sản phẩm')
+            }
+
+            await product.update({
+                name,
+                description,
+                photo: req.file.filename,
+                price,
+                categoryId,
+                brandId
+            })
+
+            return new SuccessResponse(res, {
+                status: 200,
+                data: product
+            })
+        } catch (err) {
+            next(err)
+        }
+    }
 }
 
 module.exports = new ProductController()
