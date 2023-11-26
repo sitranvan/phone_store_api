@@ -12,9 +12,16 @@ reviewRouter.get('/:id', ReviewController.getAllReviewProduct)
 reviewRouter.post(
     '/',
     jwtAuthMiddleware,
-    validatorMiddleware(ReviewSchema.createReview),
     authorizedMiddleware('customer'),
+    validatorMiddleware(ReviewSchema.createReview),
     ReviewController.createReview
+)
+reviewRouter.patch(
+    '/:id',
+    jwtAuthMiddleware,
+    authorizedMiddleware('customer'),
+    validatorMiddleware(ReviewSchema.updateReview),
+    ReviewController.updateReview
 )
 
 module.exports = reviewRouter
