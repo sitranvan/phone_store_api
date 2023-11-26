@@ -11,10 +11,9 @@ class CategorySchema {
     }
     get updateCategory() {
         return Joi.object({
-            name: Joi.string().required().messages({
+            name: Joi.string().messages({
                 'string.base': 'Tên danh mục phải là chuỗi',
-                'string.empty': 'Tên danh mục không được để trống',
-                'any.required': 'Tên danh mục trường bắt buộc'
+                'string.empty': 'Tên danh mục không được để trống'
             })
         })
     }

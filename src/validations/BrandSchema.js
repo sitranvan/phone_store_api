@@ -11,10 +11,9 @@ class BrandSchema {
     }
     get updateBrand() {
         return Joi.object({
-            name: Joi.string().required().messages({
+            name: Joi.string().messages({
                 'string.base': 'Tên thương hiệu phải là chuỗi',
-                'string.empty': 'Tên thương hiệu không được để trống',
-                'any.required': 'Tên thương hiệu trường bắt buộc'
+                'string.empty': 'Tên thương hiệu không được để trống'
             })
         })
     }

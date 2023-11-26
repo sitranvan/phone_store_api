@@ -10,15 +10,15 @@ const categoryRouter = Router()
 categoryRouter.get('/', CategoryController.getAllCategory)
 categoryRouter.post(
     '/',
-    validatorMiddleware(CategorySchema.createCategory),
     jwtAuthMiddleware,
+    validatorMiddleware(CategorySchema.createCategory),
     authorizedMiddleware('owner'),
     CategoryController.createCategory
 )
 categoryRouter.patch(
     '/:id',
-    validatorMiddleware(CategorySchema.updateCategory),
     jwtAuthMiddleware,
+    validatorMiddleware(CategorySchema.updateCategory),
     authorizedMiddleware('owner'),
     CategoryController.updateCategory
 )

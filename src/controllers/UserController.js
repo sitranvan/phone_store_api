@@ -71,10 +71,17 @@ class UserController {
                     }
                 )
             }
-
+            const user = await User.findByPk(userId, {
+                include: [
+                    {
+                        model: Address,
+                        as: 'address'
+                    }
+                ]
+            })
             return new SuccessResponse(res, {
                 status: 200,
-                message: 'Cập nhật thông tin thành công'
+                data: user
             })
         } catch (err) {
             next(err)

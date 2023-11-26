@@ -26,7 +26,7 @@ class AuthController {
             // Mã hóa mật khẩu
             const hashedPassword = bcrypt.hashSync(password)
             // Tạo người dùng
-            await User.create({
+            const user = await User.create({
                 name,
                 email,
                 password: hashedPassword
@@ -50,8 +50,8 @@ class AuthController {
             ])
 
             return new SuccessResponse(res, {
-                status: 200,
-                message: 'Đăng ký thành công'
+                status: 201,
+                data: user
             })
         } catch (err) {
             next(err)
@@ -91,7 +91,6 @@ class AuthController {
             )
             return new SuccessResponse(res, {
                 status: 200,
-                message: 'Đăng nhập thành công',
                 data: {
                     token
                 }

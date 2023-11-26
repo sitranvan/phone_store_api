@@ -11,16 +11,16 @@ brandRouter.get('/', BrandController.getAllBrand)
 
 brandRouter.post(
     '/',
-    validatorMiddleware(BrandSchema.createBrand),
     jwtAuthMiddleware,
+    validatorMiddleware(BrandSchema.createBrand),
     authorizedMiddleware('owner'),
     BrandController.createBrand
 )
 
 brandRouter.patch(
     '/:id',
-    validatorMiddleware(BrandSchema.updateBrand),
     jwtAuthMiddleware,
+    validatorMiddleware(BrandSchema.updateBrand),
     authorizedMiddleware('owner'),
     BrandController.updateBrand
 )

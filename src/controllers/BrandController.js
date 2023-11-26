@@ -18,11 +18,11 @@ class BrandController {
 
     async createBrand(req, res, next) {
         try {
-            await Brand.create(req.body)
+            const brand = await Brand.create(req.body)
 
             return new SuccessResponse(res, {
                 status: 201,
-                message: 'Tạo thương hiệu thành công'
+                data: brand
             })
         } catch (err) {
             next(err)
@@ -46,7 +46,7 @@ class BrandController {
 
             return new SuccessResponse(res, {
                 status: 200,
-                message: 'Cập nhật thương hiệu thành công'
+                data: brand
             })
         } catch (err) {
             next(err)
@@ -67,7 +67,7 @@ class BrandController {
 
             return new SuccessResponse(res, {
                 status: 200,
-                message: 'Xóa thương hiệu thành công'
+                data: brand
             })
         } catch (err) {
             next(err)

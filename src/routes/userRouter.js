@@ -19,8 +19,8 @@ userRouter.patch(
 
 userRouter.patch(
     '/update-password',
-    validatorMiddleware(UserSchema.updatePassword),
     jwtAuthMiddleware,
+    validatorMiddleware(UserSchema.updatePassword),
     UserController.updatePassword
 )
 

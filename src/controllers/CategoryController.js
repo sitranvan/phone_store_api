@@ -18,11 +18,11 @@ class CategoryController {
 
     async createCategory(req, res, next) {
         try {
-            await Category.create(req.body)
+            const category = await Category.create(req.body)
 
             return new SuccessResponse(res, {
                 status: 201,
-                message: 'Tạo danh mục thành công'
+                data: category
             })
         } catch (err) {
             next(err)
@@ -46,7 +46,7 @@ class CategoryController {
 
             return new SuccessResponse(res, {
                 status: 200,
-                message: 'Cập nhật danh mục thành công'
+                data: category
             })
         } catch (err) {
             next(err)
@@ -68,7 +68,7 @@ class CategoryController {
 
             return new SuccessResponse(res, {
                 status: 200,
-                message: 'Xóa danh mục thành công'
+                data: category
             })
         } catch (err) {
             next(err)

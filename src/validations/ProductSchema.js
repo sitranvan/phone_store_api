@@ -31,10 +31,12 @@ class ProductShema {
     get updateProduct() {
         return Joi.object({
             name: Joi.string().messages({
-                'string.base': 'Tên phải là chuỗi'
+                'string.base': 'Tên phải là chuỗi',
+                'string.empty': 'Tên không được để trống'
             }),
             description: Joi.string().allow().messages({
-                'string.base': 'Mô tả phải là chuỗi'
+                'string.base': 'Mô tả phải là chuỗi',
+                'string.empty': 'Mô tả được để trống'
             }),
             price: Joi.number().message({
                 'number.base': 'Giá phải là số'
