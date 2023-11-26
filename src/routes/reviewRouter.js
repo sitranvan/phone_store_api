@@ -8,6 +8,7 @@ const ReviewSchema = require('../validations/ReviewSchema')
 const reviewRouter = Router()
 
 reviewRouter.get('/', jwtAuthMiddleware, authorizedMiddleware('owner'), ReviewController.getAllReview)
+reviewRouter.get('/:id', ReviewController.getAllReviewProduct)
 reviewRouter.post(
     '/',
     jwtAuthMiddleware,

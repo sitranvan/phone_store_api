@@ -1,12 +1,30 @@
 const Review = require('../models/Review')
+const ErrorResponse = require('../response/ErrorResponse')
 const SuccessResponse = require('../response/SuccessResponse')
 
 class ReviewController {
-    async getAllReview(req, res) {
+    async getAllReview(req, res, next) {
         try {
-            const { id: productId } = req.params
             const reviews = await Review.findAll()
 
+            return new SuccessResponse(res, {
+                status: 200,
+                data: reviews
+            })
+        } catch (err) {
+            next(err)
+        }
+    }
+
+    async getAllReviewProduct(req, res, next) {
+        try {
+            const { id: productId } = req.params
+            const reviews = await Review.findAll({
+                where: { productId }
+            })
+            if (reviews.length <= 0) {
+                throw new ErrorResponse(404, 'Chưa có lượt đánh giá nào')
+            }
             return new SuccessResponse(res, {
                 status: 200,
                 data: reviews
