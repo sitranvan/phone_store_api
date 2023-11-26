@@ -4,6 +4,7 @@ const Role = require('./Role')
 const User = require('./User')
 const Product = require('./Product')
 const Category = require('./Category')
+const Review = require('./Review')
 
 // User-Address
 User.hasMany(Address, {
@@ -14,30 +15,48 @@ Address.belongsTo(User, {
     foreignKey: 'userId'
 })
 
-// User-Role
+// Role-User
+Role.hasMany(User, {
+    foreignKey: 'role'
+})
 User.belongsTo(Role, {
     foreignKey: 'role',
     as: 'roles'
 })
 
-Role.hasMany(User, {
-    foreignKey: 'role'
-})
-
-// Product-Category
-Product.belongsTo(Category, {
-    foreignKey: 'categoryId',
-    as: 'category'
-})
+// Category-Product
 Category.hasMany(Product, {
     foreignKey: 'categoryId'
 })
 
-// Product-Brand
+Product.belongsTo(Category, {
+    foreignKey: 'categoryId',
+    as: 'category'
+})
+
+// Brand-Product
+Brand.hasMany(Product, {
+    foreignKey: 'brandId'
+})
 Product.belongsTo(Brand, {
     foreignKey: 'brandId',
     as: 'brand'
 })
-Brand.hasMany(Product, {
-    foreignKey: 'brandId'
+
+// Product-Review
+Product.hasMany(Review, {
+    foreignKey: 'productId',
+    as: 'reviews'
+})
+Review.belongsTo(Product, {
+    foreignKey: 'productId'
+})
+
+// User-Review
+User.hasMany(Review, {
+    foreignKey: 'userId',
+    as: 'reviews'
+})
+Review.belongsTo(User, {
+    foreignKey: 'userId'
 })
