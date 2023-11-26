@@ -5,7 +5,11 @@ const SuccessResponse = require('../response/SuccessResponse')
 class ReviewController {
     async getAllReview(req, res, next) {
         try {
-            const reviews = await Review.findAll()
+            const reviews = await Review.findAll({
+                where: {
+                    isHidden: false
+                }
+            })
 
             return new SuccessResponse(res, {
                 status: 200,
@@ -20,7 +24,7 @@ class ReviewController {
         try {
             const { id: productId } = req.params
             const reviews = await Review.findAll({
-                where: { productId }
+                where: { productId, isHidden: false }
             })
             if (reviews.length <= 0) {
                 throw new ErrorResponse(404, 'Chưa có lượt đánh giá nào')
