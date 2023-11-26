@@ -2,7 +2,19 @@ const Review = require('../models/Review')
 const SuccessResponse = require('../response/SuccessResponse')
 
 class ReviewController {
-    async getAllReview(req, res) {}
+    async getAllReview(req, res) {
+        try {
+            const { id: productId } = req.params
+            const reviews = await Review.findAll()
+
+            return new SuccessResponse(res, {
+                status: 200,
+                data: reviews
+            })
+        } catch (err) {
+            next(err)
+        }
+    }
 
     async createReview(req, res, next) {
         try {
