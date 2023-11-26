@@ -80,7 +80,28 @@ class ReviewController {
         }
     }
 
-    async hiddenReview(req, res) {}
+    async hiddenReview(req, res, next) {
+        try {
+            const { id: reviewId } = req.params
+
+            const review = await Review.findOne({
+                where: { id: reviewId }
+            })
+
+            if (!review) {
+                throw new ErrorResponse(404, 'Không tìm thấy đánh giá')
+            }
+            review.isHidden = true
+
+            await review.save()
+            return new SuccessResponse(res, {
+                status: 200,
+                data: review
+            })
+        } catch (err) {
+            next(err)
+        }
+    }
 
     async deleteReview(req, res) {}
 }

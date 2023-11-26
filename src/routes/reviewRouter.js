@@ -24,4 +24,6 @@ reviewRouter.patch(
     ReviewController.updateReview
 )
 
+reviewRouter.patch('/hidden/:id', jwtAuthMiddleware, authorizedMiddleware('owner'), ReviewController.hiddenReview)
+
 module.exports = reviewRouter
