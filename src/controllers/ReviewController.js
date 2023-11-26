@@ -103,7 +103,26 @@ class ReviewController {
         }
     }
 
-    async deleteReview(req, res) {}
+    async deleteReview(req, res, next) {
+        try {
+            const { id: reviewId } = req.params
+
+            const review = await Review.findOne({
+                where: { id: reviewId }
+            })
+
+            if (!review) {
+                throw new ErrorResponse(404, 'Không tìm thấy đánh giá')
+            }
+            await review.destroy()
+            return new SuccessResponse(res, {
+                status: 200,
+                data: review
+            })
+        } catch (err) {
+            next(err)
+        }
+    }
 }
 
 module.exports = new ReviewController()

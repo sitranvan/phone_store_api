@@ -25,5 +25,5 @@ reviewRouter.patch(
 )
 
 reviewRouter.patch('/hidden/:id', jwtAuthMiddleware, authorizedMiddleware('owner'), ReviewController.hiddenReview)
-
+reviewRouter.delete('/:id', jwtAuthMiddleware, authorizedMiddleware('owner'), ReviewController.deleteReview)
 module.exports = reviewRouter
