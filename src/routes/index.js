@@ -1,6 +1,7 @@
 const authRouter = require('./authRouter')
 const brandRouter = require('./brandRouter')
 const categoryRouter = require('./categoryRouter')
+const productRouter = require('./productRouter')
 const userRouter = require('./userRouter')
 
 const handleRouters = (app) => {
@@ -8,6 +9,7 @@ const handleRouters = (app) => {
     app.use('/api/v1/users', userRouter)
     app.use('/api/v1/categories', categoryRouter)
     app.use('/api/v1/brands', brandRouter)
+    app.use('/api/v1/products', productRouter)
 }
 
 module.exports = handleRouters
