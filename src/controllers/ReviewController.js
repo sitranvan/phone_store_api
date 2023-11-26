@@ -1,0 +1,33 @@
+const Review = require('../models/Review')
+const SuccessResponse = require('../response/SuccessResponse')
+
+class ReviewController {
+    async getAllReview(req, res) {}
+
+    async createReview(req, res, next) {
+        try {
+            const { id: userId } = req.user
+            const { comment, rating, productId } = req.body
+
+            const review = await Review.create({
+                comment,
+                rating,
+                productId,
+                userId
+            })
+
+            return new SuccessResponse(res, {
+                status: 201,
+                data: review
+            })
+        } catch (err) {
+            next(err)
+        }
+    }
+
+    async hiddenReview(req, res) {}
+
+    async deleteReview(req, res) {}
+}
+
+module.exports = new ReviewController()
