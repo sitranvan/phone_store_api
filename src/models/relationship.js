@@ -5,7 +5,6 @@ const User = require('./User')
 const Product = require('./Product')
 const Category = require('./Category')
 const Review = require('./Review')
-const Cart = require('./Cart')
 
 // User-Address
 User.hasMany(Address, {
@@ -60,22 +59,4 @@ User.hasMany(Review, {
 })
 Review.belongsTo(User, {
     foreignKey: 'userId'
-})
-
-// User-Cart
-User.hasOne(Cart, {
-    foreignKey: 'userId',
-    as: 'carts'
-})
-Cart.belongsTo(User, {
-    foreignKey: 'userId'
-})
-
-// Product-Cart
-Product.hasOne(Cart, {
-    foreignKey: 'productId'
-})
-Cart.belongsTo(Product, {
-    foreignKey: 'productId',
-    as: 'products'
 })
