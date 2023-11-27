@@ -11,18 +11,17 @@ module.exports = {
          * Example:
          * await queryInterface.createTable('users', { id: Sequelize.INTEGER });
          */
-        await queryInterface.createTable('carts', {
+        await queryInterface.createTable('carts_item', {
             id: {
                 type: DataTypes.INTEGER,
                 primaryKey: true,
                 autoIncrement: true
             },
-
-            userId: {
+            cartId: {
                 type: DataTypes.INTEGER,
                 allowNull: false,
                 references: {
-                    model: 'users',
+                    model: 'carts',
                     key: 'id'
                 }
             },
@@ -33,11 +32,6 @@ module.exports = {
                     model: 'products',
                     key: 'id'
                 }
-            },
-            isOrdered: {
-                type: DataTypes.BOOLEAN,
-                allowNull: false,
-                defaultValue: false
             },
             createdAt: {
                 type: DataTypes.DATE,
@@ -59,6 +53,5 @@ module.exports = {
          * Example:
          * await queryInterface.dropTable('users');
          */
-        await queryInterface.dropTable('carts')
     }
 }
