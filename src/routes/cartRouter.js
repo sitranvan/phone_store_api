@@ -15,5 +15,6 @@ cartRouter.post(
     validatorMiddleware(CartSchema.addProductToCart),
     CartController.addProductToCart
 )
+cartRouter.delete('/:id', jwtAuthMiddleware, authorizedMiddleware('customer'), CartController.deleteProductFromCart)
 
 module.exports = cartRouter

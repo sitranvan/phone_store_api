@@ -56,6 +56,28 @@ class CartController {
             next(err)
         }
     }
+    async deleteProductFromCart(req, res, next) {
+        try {
+            const { id: productId } = req.params
+            const { id: userId } = req.user
+            const cart = await Cart.findOne({
+                where: {
+                    userId,
+                    productId
+                }
+            })
+            if (!cart) {
+                throw new ErrorResponse(404, 'Sản phẩm không tồn tại trong giỏ hàng')
+            }
+            await cart.destroy()
+            return new SuccessResponse(res, {
+                status: 200,
+                data: cart
+            })
+        } catch (err) {
+            next(err)
+        }
+    }
 }
 
 module.exports = new CartController()
