@@ -63,7 +63,7 @@ Review.belongsTo(User, {
 })
 
 // User-Cart
-User.hasMany(Cart, {
+User.hasOne(Cart, {
     foreignKey: 'userId',
     as: 'carts'
 })
@@ -72,10 +72,10 @@ Cart.belongsTo(User, {
 })
 
 // Product-Cart
-Product.hasMany(Cart, {
-    foreignKey: 'productId',
-    as: 'carts'
+Product.hasOne(Cart, {
+    foreignKey: 'productId'
 })
 Cart.belongsTo(Product, {
-    foreignKey: 'productId'
+    foreignKey: 'productId',
+    as: 'products'
 })

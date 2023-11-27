@@ -7,6 +7,7 @@ const CartSchema = require('../validations/CartSchema')
 
 const cartRouter = Router()
 
+cartRouter.get('/', jwtAuthMiddleware, authorizedMiddleware('customer'), CartController.getCart)
 cartRouter.post(
     '/',
     jwtAuthMiddleware,
