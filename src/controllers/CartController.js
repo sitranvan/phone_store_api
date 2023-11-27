@@ -5,6 +5,43 @@ const ErrorResponse = require('../response/ErrorResponse')
 const SuccessResponse = require('../response/SuccessResponse')
 
 class CartController {
+    async getCart(req, res, next) {
+        try {
+            const { id: userId } = req.user
+
+            const cart = await Cart.findOne({
+                where: {
+                    userId,
+                    isPaid: false
+                }
+            })
+
+            if (!cart) {
+                throw new ErrorResponse(404, 'Không tìm thấy giỏ hàng')
+            }
+
+            const cartItems = await CartItem.findAll({
+                where: {
+                    cartId: cart.id
+                },
+                include: [
+                    {
+                        model: Product,
+                        as: 'products',
+                        attributes: ['id', 'name', 'description', 'photo', 'price']
+                    }
+                ]
+            })
+
+            return new SuccessResponse(res, {
+                status: 200,
+                data: cartItems
+            })
+        } catch (error) {
+            next(error)
+        }
+    }
+
     async addProductToCart(req, res, next) {
         try {
             const { id: productId } = req.params

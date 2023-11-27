@@ -80,3 +80,13 @@ Cart.hasMany(CartItem, {
 CartItem.belongsTo(Cart, {
     foreignKey: 'cartId'
 })
+
+// CartItem-Product
+CartItem.belongsTo(Product, {
+    foreignKey: 'productId',
+    as: 'products'
+})
+
+Product.hasMany(CartItem, {
+    foreignKey: 'productId'
+})
