@@ -44,6 +44,41 @@ class OrderController {
             next(error)
         }
     }
+
+    async getOrderById(req, res, next) {
+        try {
+            const { id: userId } = req.user
+            const { id: orderId } = req.params
+            const order = await Order.findByPk(orderId, {
+                where: {
+                    id: orderId,
+                    userId
+                },
+                include: [
+                    {
+                        model: Product,
+                        as: 'products',
+                        through: {
+                            model: OrderItem,
+                            as: 'ordersItem' // Đặt tên alias cho OrderItem trong kết quả trả về
+                        }
+                    }
+                ]
+            })
+
+            if (!order) {
+                throw new ErrorResponse(404, 'Không tìm thấy đơn hàng')
+            }
+
+            return new SuccessResponse(res, {
+                status: 200,
+                data: order
+            })
+        } catch (error) {
+            next(error)
+        }
+    }
+
     async createOrder(req, res, next) {
         try {
             const { id: userId } = req.user

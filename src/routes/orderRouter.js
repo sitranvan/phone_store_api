@@ -6,6 +6,7 @@ const authorizedMiddleware = require('../middlewares/authorizedMiddleware')
 const orderRouter = Router()
 
 orderRouter.get('/', jwtAuthMiddleware, authorizedMiddleware('customer', 'owner'), OrderController.getAllOrder)
+orderRouter.get('/:id', jwtAuthMiddleware, authorizedMiddleware('customer'), OrderController.getOrderById)
 orderRouter.post('/', jwtAuthMiddleware, authorizedMiddleware('customer'), OrderController.createOrder)
 
 module.exports = orderRouter
