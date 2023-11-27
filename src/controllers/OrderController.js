@@ -47,24 +47,49 @@ class OrderController {
 
     async getOrderById(req, res, next) {
         try {
-            const { id: userId } = req.user
+            const { id: userId, role } = req.user
             const { id: orderId } = req.params
-            const order = await Order.findByPk(orderId, {
-                where: {
-                    id: orderId,
-                    userId
-                },
-                include: [
-                    {
-                        model: Product,
-                        as: 'products',
-                        through: {
-                            model: OrderItem,
-                            as: 'ordersItem' // Đặt tên alias cho OrderItem trong kết quả trả về
+
+            let order = []
+            if (role === 'customer') {
+                console.log(1)
+                order = await Order.findOne({
+                    where: {
+                        id: orderId,
+                        userId
+                    },
+                    include: [
+                        {
+                            model: Product,
+                            as: 'products',
+                            through: {
+                                model: OrderItem,
+                                as: 'ordersItem' // Đặt tên alias cho OrderItem trong kết quả trả về
+                            }
                         }
-                    }
-                ]
-            })
+                    ]
+                })
+            }
+
+            if (role === 'owner') {
+                console.log(2)
+
+                order = await Order.findOne({
+                    where: {
+                        id: orderId
+                    },
+                    include: [
+                        {
+                            model: Product,
+                            as: 'products',
+                            through: {
+                                model: OrderItem,
+                                as: 'ordersItem' // Đặt tên alias cho OrderItem trong kết quả trả về
+                            }
+                        }
+                    ]
+                })
+            }
 
             if (!order) {
                 throw new ErrorResponse(404, 'Không tìm thấy đơn hàng')
