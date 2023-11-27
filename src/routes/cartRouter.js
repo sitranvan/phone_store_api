@@ -7,5 +7,6 @@ const cartRouter = Router()
 
 cartRouter.get('/', jwtAuthMiddleware, authorizedMiddleware('customer'), CartController.getCart)
 cartRouter.post('/:id', jwtAuthMiddleware, authorizedMiddleware('customer'), CartController.addProductToCart)
+cartRouter.delete('/:id', jwtAuthMiddleware, authorizedMiddleware('customer'), CartController.deleteProductFromCart)
 
 module.exports = cartRouter

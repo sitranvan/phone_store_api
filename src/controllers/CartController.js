@@ -102,6 +102,43 @@ class CartController {
             next(error)
         }
     }
+
+    async deleteProductFromCart(req, res, next) {
+        try {
+            const { id: productId } = req.params
+            const { id: userId } = req.user
+
+            // Tìm giỏ hàng
+            const cart = await Cart.findOne({
+                where: {
+                    userId,
+                    isPaid: false
+                }
+            })
+
+            if (!cart) {
+                throw new ErrorResponse(404, 'Không tìm thấy giỏ hàng')
+            }
+
+            const productInCart = await CartItem.findOne({
+                where: {
+                    cartId: cart.id,
+                    productId
+                }
+            })
+            if (!productInCart) {
+                throw new ErrorResponse(404, 'Không tìm thấy sản phẩm trong giỏ hàng')
+            }
+            await productInCart.destroy()
+
+            return new SuccessResponse(res, {
+                status: 200,
+                data: productInCart
+            })
+        } catch (err) {
+            next(err)
+        }
+    }
 }
 
 module.exports = new CartController()
