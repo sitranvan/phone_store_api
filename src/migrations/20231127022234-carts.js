@@ -17,7 +17,6 @@ module.exports = {
                 primaryKey: true,
                 autoIncrement: true
             },
-
             userId: {
                 type: DataTypes.INTEGER,
                 allowNull: false,
@@ -26,15 +25,7 @@ module.exports = {
                     key: 'id'
                 }
             },
-            productId: {
-                type: DataTypes.INTEGER,
-                allowNull: false,
-                references: {
-                    model: 'products',
-                    key: 'id'
-                }
-            },
-            isOrdered: {
+            isPaid: {
                 type: DataTypes.BOOLEAN,
                 allowNull: false,
                 defaultValue: false
