@@ -37,7 +37,8 @@ const OrderItem = sequelize.define(
         }
     },
     {
-        tableName: 'orders_item'
+        tableName: 'orders_item',
+        paranoid: true
     }
 )
 

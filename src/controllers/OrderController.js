@@ -52,7 +52,6 @@ class OrderController {
 
             let order = []
             if (role === 'customer') {
-                console.log(1)
                 order = await Order.findOne({
                     where: {
                         id: orderId,
@@ -72,8 +71,6 @@ class OrderController {
             }
 
             if (role === 'owner') {
-                console.log(2)
-
                 order = await Order.findOne({
                     where: {
                         id: orderId
@@ -146,6 +143,38 @@ class OrderController {
             return new SuccessResponse(res, {
                 status: 200,
                 data: order
+            })
+        } catch (err) {
+            next(err)
+        }
+    }
+
+    async deleteOrder(req, res, next) {
+        try {
+            const { id: orderId } = req.params
+
+            const orderItem = await OrderItem.destroy({
+                where: {
+                    orderId
+                }
+            })
+
+            if (!orderItem) {
+                throw new ErrorResponse(404, 'Không tìm thấy sản phẩm trong đơn hàng')
+            }
+
+            const order = await Order.destroy({
+                where: {
+                    id: orderId
+                }
+            })
+            if (!order) {
+                throw new ErrorResponse(404, 'Không tìm thấy đơn hàng')
+            }
+
+            return new SuccessResponse(res, {
+                status: 200,
+                message: 'Xóa đơn hàng thành công'
             })
         } catch (err) {
             next(err)

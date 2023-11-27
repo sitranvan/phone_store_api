@@ -38,7 +38,8 @@ const Order = sequelize.define(
         }
     },
     {
-        tableName: 'orders'
+        tableName: 'orders',
+        paranoid: true
     }
 )
 
