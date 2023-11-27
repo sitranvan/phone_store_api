@@ -22,6 +22,11 @@ const Cart = sequelize.define(
             type: DataTypes.BOOLEAN,
             allowNull: false,
             defaultValue: false
+        },
+        total: {
+            type: DataTypes.FLOAT,
+            allowNull: false,
+            defaultValue: 0
         }
     },
     {

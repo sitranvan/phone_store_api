@@ -93,14 +93,19 @@ class CartController {
                 productId: productId
             })
 
-            const cartItemFinal = await newCartItem.update({
+            await newCartItem.update({
                 quantity: newCartItem.quantity + 1,
                 total: newCartItem.total + product.price
             })
 
+            // Tính tổng tiền giỏ hàng
+            await cart.update({
+                total: cart.total + product.price
+            })
+
             return new SuccessResponse(res, {
                 status: 201,
-                data: cartItemFinal
+                data: newCartItem
             })
         } catch (error) {
             // Xử lý lỗi nếu có
@@ -145,9 +150,73 @@ class CartController {
         }
     }
 
-    async totalCart(req, res, next) {
+    async updateCartItemTotalPrice(req, res, next) {
         try {
-        } catch (err) {}
+            const { id: productId } = req.params
+            const { id: userId } = req.user
+            const { quantity } = req.body
+            // Tìm giỏ hàng
+            const cart = await Cart.findOne({
+                where: {
+                    userId,
+                    isPaid: false
+                }
+            })
+
+            if (!cart) {
+                throw new ErrorResponse(404, 'Không tìm thấy giỏ hàng')
+            }
+            // Tìm sản phẩm để kiểm tra sự tồn tại
+            const product = await Product.findOne({
+                where: {
+                    id: productId
+                }
+            })
+
+            if (!product) {
+                throw new ErrorResponse(404, 'Không tìm thấy sản phẩm')
+            }
+            const productInCart = await CartItem.findOne({
+                where: {
+                    cartId: cart.id,
+                    productId
+                }
+            })
+
+            if (!productInCart) {
+                throw new ErrorResponse(404, 'Không tìm thấy sản phẩm trong giỏ hàng')
+            }
+
+            // Cập nhật
+            productInCart.update({
+                quantity,
+                total: quantity * product.price
+            })
+
+            await productInCart.save()
+
+            // Tính tổng tiền giỏ hàng
+            const allProductInCart = await CartItem.findAll({
+                where: {
+                    cartId: cart.id
+                }
+            })
+
+            const totalInCart = allProductInCart.reduce((accumulator, product) => {
+                return accumulator + product.total
+            }, 0)
+
+            await cart.update({
+                total: totalInCart
+            })
+
+            return new SuccessResponse(res, {
+                status: 200,
+                data: productInCart
+            })
+        } catch (err) {
+            next(err)
+        }
     }
 }
 
