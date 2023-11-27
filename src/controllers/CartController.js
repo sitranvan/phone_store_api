@@ -93,9 +93,14 @@ class CartController {
                 productId: productId
             })
 
+            const cartItemFinal = await newCartItem.update({
+                quantity: newCartItem.quantity + 1,
+                total: newCartItem.total + product.price
+            })
+
             return new SuccessResponse(res, {
                 status: 201,
-                data: newCartItem
+                data: cartItemFinal
             })
         } catch (error) {
             // Xử lý lỗi nếu có
@@ -138,6 +143,11 @@ class CartController {
         } catch (err) {
             next(err)
         }
+    }
+
+    async totalCart(req, res, next) {
+        try {
+        } catch (err) {}
     }
 }
 

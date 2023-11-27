@@ -26,6 +26,16 @@ const CartItem = sequelize.define(
                 model: Product,
                 key: 'id'
             }
+        },
+        quantity: {
+            type: DataTypes.INTEGER,
+            allowNull: false,
+            defaultValue: 0
+        },
+        total: {
+            type: DataTypes.FLOAT,
+            allowNull: false,
+            defaultValue: 0
         }
     },
     {
