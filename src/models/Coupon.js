@@ -23,6 +23,10 @@ const Coupon = sequelize.define(
             type: DataTypes.FLOAT,
             allowNull: false
         },
+        description: {
+            type: DataTypes.TEXT,
+            allowNull: false
+        },
         startDate: {
             type: DataTypes.DATE,
             allowNull: false
