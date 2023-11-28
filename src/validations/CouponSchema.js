@@ -24,6 +24,27 @@ class CouponSchema {
             })
         })
     }
+
+    get updateCoupon() {
+        return Joi.object({
+            code: Joi.string().messages({
+                'string.base': 'Mã khuyến mãi phải là chuỗi',
+                'string.empty': 'Mã khuyến mãi không được để trống'
+            }),
+            type: Joi.string().messages({
+                'string.base': 'Loại khuyến mãi phải là chuỗi',
+                'string.empty': 'Loại khuyến mãi không được để trống'
+            }),
+            value: Joi.number().messages({
+                'number.base': 'Giá trị phải là số',
+                'string.empty': 'Giá trị không được để trống'
+            }),
+            description: Joi.string().messages({
+                'string.base': 'Mô tả phải là chuỗi',
+                'string.empty': 'Mô tả không được để trống'
+            })
+        })
+    }
 }
 
 module.exports = new CouponSchema()

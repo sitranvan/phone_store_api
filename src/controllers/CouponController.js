@@ -57,6 +57,34 @@ class CouponController {
             next(err)
         }
     }
+    async updateCoupon(req, res, next) {
+        try {
+            const { id: couponId } = req.params
+            const { code, type, value, description } = req.body
+            const coupon = await Coupon.findOne({
+                where: {
+                    id: couponId
+                }
+            })
+
+            if (!coupon) {
+                throw new ErrorResponse(404, 'Không tìm thấy khuyến mãi')
+            }
+
+            coupon.code = code
+            coupon.type = type
+            coupon.value = value
+            coupon.description = description
+            // Ngày hết hạn ngày bắt đầu xử lý sau
+            await coupon.save()
+            return new SuccessResponse(res, {
+                status: 200,
+                data: coupon
+            })
+        } catch (err) {
+            next(err)
+        }
+    }
 }
 
 module.exports = new CouponController()

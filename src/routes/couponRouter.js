@@ -15,5 +15,12 @@ couponRouter.post(
     validatorMiddleware(CouponSchema.createCoupon),
     CouponController.createCoupon
 )
+couponRouter.patch(
+    '/:id',
+    jwtAuthMiddleware,
+    authorizedMiddleware('owner'),
+    validatorMiddleware(CouponSchema.updateCoupon),
+    CouponController.updateCoupon
+)
 
 module.exports = couponRouter
