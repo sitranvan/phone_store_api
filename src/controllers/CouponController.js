@@ -85,6 +85,29 @@ class CouponController {
             next(err)
         }
     }
+
+    async deleteCoupon(req, res, next) {
+        try {
+            const { id: couponId } = req.params
+            const coupon = await Coupon.findOne({
+                where: {
+                    id: couponId
+                }
+            })
+
+            if (!coupon) {
+                throw new ErrorResponse(404, 'Không tìm thấy khuyến mãi')
+            }
+
+            await coupon.destroy()
+            return new SuccessResponse(res, {
+                status: 200,
+                data: coupon
+            })
+        } catch (err) {
+            next(err)
+        }
+    }
 }
 
 module.exports = new CouponController()

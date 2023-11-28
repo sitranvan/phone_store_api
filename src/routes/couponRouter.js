@@ -23,4 +23,6 @@ couponRouter.patch(
     CouponController.updateCoupon
 )
 
+couponRouter.delete('/:id', jwtAuthMiddleware, authorizedMiddleware('owner'), CouponController.deleteCoupon)
+
 module.exports = couponRouter
