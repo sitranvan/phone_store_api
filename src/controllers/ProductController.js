@@ -63,12 +63,18 @@ class ProductController {
 
     async createProduct(req, res, next) {
         try {
-            const { name, description, price, categoryId, brandId } = req.body
+            const { name, description, specification, price, categoryId, brandId } = req.body
+
+            let photo = ''
+            if (req.file) {
+                photo = req.file.filename
+            }
 
             const product = await Product.create({
                 name,
                 description,
-                photo: req.file.filename,
+                specification,
+                photo,
                 price,
                 categoryId,
                 brandId
@@ -84,18 +90,23 @@ class ProductController {
     }
     async updateProduct(req, res, next) {
         try {
-            const { name, description, price, categoryId, brandId } = req.body
+            const { name, description, specification, price, categoryId, brandId } = req.body
             const { id: productId } = req.params
             const product = await Product.findByPk(productId)
 
             if (!product) {
                 throw new ErrorResponse(404, 'Không tìm thấy sản phẩm')
             }
+            let photo = ''
+            if (req.file) {
+                photo = req.file.filename
+            }
 
             await product.update({
                 name,
                 description,
-                photo: req.file.filename,
+                specification,
+                photo,
                 price,
                 categoryId,
                 brandId

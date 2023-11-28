@@ -9,7 +9,12 @@ class ProductShema {
                 'any.required': 'Tên là trường bắt buộc'
             }),
             description: Joi.string().allow().messages({
-                'string.base': 'Mô tả phải là chuỗi'
+                'string.base': 'Mô tả phải là chuỗi',
+                'string.empty': 'Mô tả được để trống'
+            }),
+            specification: Joi.string().allow().messages({
+                'string.base': 'Thông số kỹ thuật phải là chuỗi',
+                'string.empty': 'Thông số kỹ thuật được để trống'
             }),
             price: Joi.number().required().message({
                 'number.base': 'Giá phải là số',
@@ -37,6 +42,10 @@ class ProductShema {
             description: Joi.string().allow().messages({
                 'string.base': 'Mô tả phải là chuỗi',
                 'string.empty': 'Mô tả được để trống'
+            }),
+            specification: Joi.string().allow().messages({
+                'string.base': 'Thông số kỹ thuật phải là chuỗi',
+                'string.empty': 'Thông số kỹ thuật được để trống'
             }),
             price: Joi.number().message({
                 'number.base': 'Giá phải là số'
