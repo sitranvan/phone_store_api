@@ -48,6 +48,10 @@ const Order = sequelize.define(
                 model: User,
                 key: 'id'
             }
+        },
+        finalTotal: {
+            type: DataTypes.FLOAT,
+            allowNull: true
         }
     },
     {
