@@ -1,6 +1,7 @@
 const { DataTypes } = require('sequelize')
 const sequelize = require('../database/connectMysql')
 const User = require('./User')
+const Coupon = require('./Coupon')
 
 const Cart = sequelize.define(
     'Cart',
@@ -27,6 +28,14 @@ const Cart = sequelize.define(
             type: DataTypes.FLOAT,
             allowNull: false,
             defaultValue: 0
+        },
+        couponId: {
+            type: DataTypes.INTEGER,
+            allowNull: false,
+            references: {
+                model: Coupon,
+                key: 'id'
+            }
         }
     },
     {
