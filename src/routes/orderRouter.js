@@ -9,5 +9,13 @@ orderRouter.get('/', jwtAuthMiddleware, authorizedMiddleware('customer', 'owner'
 orderRouter.get('/:id', jwtAuthMiddleware, authorizedMiddleware('customer', 'owner'), OrderController.getOrderById)
 orderRouter.post('/', jwtAuthMiddleware, authorizedMiddleware('customer'), OrderController.createOrder)
 orderRouter.delete('/:id', jwtAuthMiddleware, authorizedMiddleware('owner'), OrderController.deleteOrder)
+orderRouter.patch(
+    '/cancel/:id',
+    jwtAuthMiddleware,
+    authorizedMiddleware('owner', 'customer'),
+    OrderController.cancelOrderById
+)
+orderRouter.patch('/shipper/:id', jwtAuthMiddleware, authorizedMiddleware('owner'), OrderController.setShipperOrder)
+orderRouter.patch('/delivered/:id', jwtAuthMiddleware, authorizedMiddleware('owner'), OrderController.setDeliveredOrder)
 
 module.exports = orderRouter

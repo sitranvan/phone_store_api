@@ -114,3 +114,12 @@ User.hasMany(Order, {
 Order.belongsTo(User, {
     foreignKey: 'userId'
 })
+
+//
+User.hasMany(Order, {
+    foreignKey: 'cancelledBy'
+})
+
+Order.belongsTo(User, {
+    foreignKey: 'cancelledBy'
+})

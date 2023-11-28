@@ -28,6 +28,19 @@ const Order = sequelize.define(
             type: DataTypes.STRING,
             allowNull: true
         },
+        cancelledBy: {
+            type: DataTypes.INTEGER,
+            allowNull: true,
+            after: 'canceledReason',
+            references: {
+                model: 'users',
+                key: 'id'
+            }
+        },
+        cancelledAt: {
+            type: DataTypes.DATE,
+            allowNull: true
+        },
         userId: {
             type: DataTypes.INTEGER,
             allowNull: false,

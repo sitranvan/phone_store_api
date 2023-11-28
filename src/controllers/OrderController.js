@@ -180,6 +180,82 @@ class OrderController {
             next(err)
         }
     }
+
+    async cancelOrderById(req, res, next) {
+        try {
+            const { id: userId, role } = req.user
+            const { id: orderId } = req.params
+            const { canceledReason } = req.body
+
+            const order = await Order.findOne({
+                where: {
+                    id: orderId
+                }
+            })
+
+            if (!order) {
+                throw new ErrorResponse(404, 'Không tìm thấy đơn hàng')
+            }
+
+            if (!['pending'].includes(order.status)) {
+                throw new ErrorResponse(403, 'Bạn không thể hủy đơn hàng này')
+            }
+
+            if (role === 'customer' && userId !== order.userId) {
+                throw new ErrorResponse(403, 'Bạn không có quyền hủy đơn hàng của người khác')
+            }
+            order.status = 'cancelled'
+            order.canceledReason = canceledReason
+            order.cancelledAt = new Date()
+            order.cancelledBy = userId
+            await order.save()
+
+            return new SuccessResponse(res, {
+                status: 200,
+                message: 'Hủy đơn hàng thành công'
+            })
+        } catch (err) {
+            next(err)
+        }
+    }
+
+    async setShipperOrder(req, res, next) {
+        const { id: orderId } = req.params
+
+        const order = await Order.findOne({
+            where: {
+                id: orderId
+            }
+        })
+        if (!order) {
+            throw new ErrorResponse(404, 'Không tìm thấy đơn hàng')
+        }
+        order.status = 'shipped'
+        await order.save()
+        return new SuccessResponse(res, {
+            status: 200,
+            data: order
+        })
+    }
+    async setDeliveredOrder(req, res, next) {
+        const { id: orderId } = req.params
+
+        const order = await Order.findOne({
+            where: {
+                id: orderId
+            }
+        })
+        if (!order) {
+            throw new ErrorResponse(404, 'Không tìm thấy đơn hàng')
+        }
+        order.status = 'delivered'
+        order.deliveredAt = new Date()
+        await order.save()
+        return new SuccessResponse(res, {
+            status: 200,
+            data: order
+        })
+    }
 }
 
 module.exports = new OrderController()
