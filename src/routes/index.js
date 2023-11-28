@@ -2,6 +2,7 @@ const authRouter = require('./authRouter')
 const brandRouter = require('./brandRouter')
 const cartRouter = require('./cartRouter')
 const categoryRouter = require('./categoryRouter')
+const orderRouter = require('./orderRouter')
 const productRouter = require('./productRouter')
 const reviewRouter = require('./reviewRouter')
 const userRouter = require('./userRouter')
@@ -14,6 +15,7 @@ const handleRouters = (app) => {
     app.use('/api/v1/products', productRouter)
     app.use('/api/v1/reviews', reviewRouter)
     app.use('/api/v1/carts', cartRouter)
+    app.use('/api/v1/orders', orderRouter)
 }
 
 module.exports = handleRouters

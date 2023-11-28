@@ -7,6 +7,8 @@ const Category = require('./Category')
 const Review = require('./Review')
 const Cart = require('./Cart')
 const CartItem = require('./CartItem')
+const Order = require('./Order')
+const OrderItem = require('./OrderItem')
 
 // User-Address
 User.hasMany(Address, {
@@ -89,4 +91,35 @@ CartItem.belongsTo(Product, {
 
 Product.hasMany(CartItem, {
     foreignKey: 'productId'
+})
+
+// Order - Product
+Order.belongsToMany(Product, {
+    through: OrderItem,
+    foreignKey: 'orderId',
+    as: 'products'
+})
+
+Product.belongsToMany(Order, {
+    through: OrderItem,
+    foreignKey: 'productId',
+    as: 'ordersItem'
+})
+
+// Order - User
+User.hasMany(Order, {
+    foreignKey: 'userId'
+})
+
+Order.belongsTo(User, {
+    foreignKey: 'userId'
+})
+
+//
+User.hasMany(Order, {
+    foreignKey: 'cancelledBy'
+})
+
+Order.belongsTo(User, {
+    foreignKey: 'cancelledBy'
 })
