@@ -137,6 +137,10 @@ class OrderController {
                     })
                 })
             )
+            const finalPrice = await Cart.findOne({
+                where: { userId, isPaid: false }
+            })
+            await order.update({ finalTotal: finalPrice.total })
 
             await cart.update({ isPaid: true })
 

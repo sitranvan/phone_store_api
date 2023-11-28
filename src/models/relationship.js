@@ -9,6 +9,7 @@ const Cart = require('./Cart')
 const CartItem = require('./CartItem')
 const Order = require('./Order')
 const OrderItem = require('./OrderItem')
+const Coupon = require('./Coupon')
 
 // User-Address
 User.hasMany(Address, {
@@ -122,4 +123,13 @@ User.hasMany(Order, {
 
 Order.belongsTo(User, {
     foreignKey: 'cancelledBy'
+})
+
+// Counpon-Cart
+Coupon.hasMany(Cart, {
+    foreignKey: 'couponId',
+    as: 'carts'
+})
+Cart.belongsTo(Coupon, {
+    foreignKey: 'couponId'
 })
