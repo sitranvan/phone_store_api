@@ -2,6 +2,7 @@ const { Sequelize } = require('sequelize')
 const Coupon = require('../models/Coupon')
 const SuccessResponse = require('../response/SuccessResponse')
 const ErrorResponse = require('../response/ErrorResponse')
+const Cart = require('../models/Cart')
 
 class CouponController {
     async getAllCoupon(req, res, next) {
@@ -103,6 +104,48 @@ class CouponController {
             return new SuccessResponse(res, {
                 status: 200,
                 data: coupon
+            })
+        } catch (err) {
+            next(err)
+        }
+    }
+
+    async addCouponToCart(req, res, next) {
+        try {
+            const { codeCoupon } = req.body
+            const { id: userId } = req.user
+            const coupon = await Coupon.findOne({
+                where: {
+                    code: codeCoupon
+                }
+            })
+
+            if (!coupon) {
+                throw new ErrorResponse(400, 'Không tìm thấy khuyến mãi')
+            }
+
+            // Tìm ra giỏ hàng hiện tại
+            const cart = await Cart.findOne({
+                where: {
+                    userId,
+                    isPaid: false
+                }
+            })
+
+            if (coupon.type === 'money') {
+                const finalPrice = cart.total - coupon.value
+                cart.total = finalPrice
+                await cart.save()
+            }
+
+            if (coupon.type === 'percent') {
+                const finalPrice = cart.total - (cart.total * coupon.value) / 100
+                cart.total = finalPrice
+                await cart.save()
+            }
+            return new SuccessResponse(res, {
+                status: 200,
+                data: cart
             })
         } catch (err) {
             next(err)

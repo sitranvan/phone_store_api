@@ -45,6 +45,16 @@ class CouponSchema {
             })
         })
     }
+
+    get addCouponToCart() {
+        return Joi.object({
+            codeCoupon: Joi.string().required().messages({
+                'string.base': 'Mã khuyến mãi phải là chuỗi',
+                'string.empty': 'Mã khuyến mãi không được để trống',
+                'any.required': 'Mã khuyến mãi trường bắt buộc'
+            })
+        })
+    }
 }
 
 module.exports = new CouponSchema()

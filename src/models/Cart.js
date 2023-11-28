@@ -31,7 +31,7 @@ const Cart = sequelize.define(
         },
         couponId: {
             type: DataTypes.INTEGER,
-            allowNull: false,
+            allowNull: true,
             references: {
                 model: Coupon,
                 key: 'id'
