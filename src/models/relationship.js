@@ -10,6 +10,7 @@ const CartItem = require('./CartItem')
 const Order = require('./Order')
 const OrderItem = require('./OrderItem')
 const Coupon = require('./Coupon')
+const Color = require('./Color')
 
 // User-Address
 User.hasMany(Address, {
@@ -132,4 +133,13 @@ Coupon.hasMany(Cart, {
 })
 Cart.belongsTo(Coupon, {
     foreignKey: 'couponId'
+})
+
+// Product-Color
+Product.hasMany(Color, {
+    foreignKey: 'productId',
+    as: 'colors'
+})
+Color.belongsTo(Product, {
+    foreignKey: 'productId'
 })
