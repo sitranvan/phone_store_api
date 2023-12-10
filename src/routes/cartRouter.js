@@ -8,10 +8,16 @@ const CartSchema = require('../validations/CartSchema')
 const cartRouter = Router()
 
 cartRouter.get('/', jwtAuthMiddleware, authorizedMiddleware('customer'), CartController.getCart)
-cartRouter.post('/:id', jwtAuthMiddleware, authorizedMiddleware('customer'), CartController.addProductToCart)
-cartRouter.delete('/:id', jwtAuthMiddleware, authorizedMiddleware('customer'), CartController.deleteProductFromCart)
+cartRouter.post('/', jwtAuthMiddleware, authorizedMiddleware('customer'), CartController.addProductToCart)
+cartRouter.delete(
+    '/',
+    jwtAuthMiddleware,
+    authorizedMiddleware('customer'),
+    validatorMiddleware(CartSchema.deleteProductInCart),
+    CartController.deleteProductFromCart
+)
 cartRouter.patch(
-    '/:id',
+    '/',
     jwtAuthMiddleware,
     authorizedMiddleware('customer'),
     validatorMiddleware(CartSchema.updateCartItemTotalPrice),

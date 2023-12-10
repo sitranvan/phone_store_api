@@ -1,8 +1,10 @@
 const bcrypt = require('bcryptjs')
+const jwt = require('jsonwebtoken')
 const Address = require('../models/Address')
 const User = require('../models/User')
 const ErrorResponse = require('../response/ErrorResponse')
-const SuccessResponse = require('../response/SuccessResponse')
+const ApiResponse = require('../response/ApiResponse')
+const { env } = require('../config/env')
 
 class UserController {
     async getMe(req, res, next) {
@@ -22,7 +24,7 @@ class UserController {
                     }
                 ]
             })
-            return new SuccessResponse(res, {
+            return new ApiResponse(res, {
                 success: true,
                 data: user
             })
@@ -79,7 +81,7 @@ class UserController {
                     }
                 ]
             })
-            return new SuccessResponse(res, {
+            return new ApiResponse(res, {
                 status: 200,
                 data: user
             })
@@ -108,9 +110,42 @@ class UserController {
             user.password = hashedPassword
             await user.save()
 
-            return new SuccessResponse(res, {
+            return new ApiResponse(res, {
                 status: 200,
                 message: 'Cập nhật mật khẩu thành công'
+            })
+        } catch (err) {
+            next(err)
+        }
+    }
+
+    async logout(req, res, next) {
+        try {
+            const token = req.headers.authorization?.replace('Bearer ', '')
+
+            if (!token) {
+                return ApiResponse.error(res, {
+                    status: 404,
+                    data: {
+                        message: 'Không tồn tại 1'
+                    }
+                })
+            }
+            const isTokenValid = jwt.verify(token, env.SECRET_KEY)
+            if (!isTokenValid) {
+                return ApiResponse.error(res, {
+                    status: 404,
+                    data: {
+                        message: 'Không tồn tại 2'
+                    }
+                })
+            }
+
+            return ApiResponse.success(res, {
+                status: 200,
+                data: {
+                    message: 'Đăng xuất tài khoản thành công'
+                }
             })
         } catch (err) {
             next(err)

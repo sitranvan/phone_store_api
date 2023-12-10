@@ -2,13 +2,12 @@ const Cart = require('../models/Cart')
 const CartItem = require('../models/CartItem')
 const Product = require('../models/Product')
 const ErrorResponse = require('../response/ErrorResponse')
-const SuccessResponse = require('../response/SuccessResponse')
+const ApiResponse = require('../response/ApiResponse')
 
 class CartController {
     async getCart(req, res, next) {
         try {
             const { id: userId } = req.user
-
             const cart = await Cart.findOne({
                 where: {
                     userId,
@@ -17,7 +16,10 @@ class CartController {
             })
 
             if (!cart) {
-                throw new ErrorResponse(404, 'Không tìm thấy giỏ hàng')
+                return ApiResponse.success(res, {
+                    status: 200,
+                    data: []
+                })
             }
 
             const cartItems = await CartItem.findAll({
@@ -33,7 +35,7 @@ class CartController {
                 ]
             })
 
-            return new SuccessResponse(res, {
+            return ApiResponse.success(res, {
                 status: 200,
                 data: cartItems
             })
@@ -44,7 +46,7 @@ class CartController {
 
     async addProductToCart(req, res, next) {
         try {
-            const { id: productId } = req.params
+            const { productId, quantity } = req.body
             const { id: userId } = req.user
 
             // Tìm giỏ hàng của người dùng chưa thanh toán
@@ -59,7 +61,8 @@ class CartController {
             if (!cart) {
                 cart = await Cart.create({
                     userId,
-                    isPaid: false
+                    isPaid: false,
+                    total: 0
                     // Thêm các trường thông tin khác cho giỏ hàng nếu cần
                 })
             }
@@ -72,40 +75,49 @@ class CartController {
             })
 
             if (!product) {
-                throw new ErrorResponse(404, 'Không tìm thấy sản phẩm')
+                return ApiResponse.error(res, {
+                    status: 404,
+                    data: {
+                        message: 'Không tìm thấy sản phẩm'
+                    }
+                })
             }
 
             // Kiểm tra xem sản phẩm đã tồn tại trong giỏ hàng chưa
             const cartItem = await CartItem.findOne({
                 where: {
                     cartId: cart.id,
-                    productId: productId
+                    productId
                 }
             })
 
             if (cartItem) {
-                throw new ErrorResponse(409, 'Sản phẩm đã có trong giỏ hàng')
+                return ApiResponse.error(res, {
+                    status: 400,
+                    data: {
+                        message: 'Sản phẩm đã tồn tại trong giỏ hàng'
+                    }
+                })
             }
 
             // Thêm sản phẩm vào giỏ hàng
             const newCartItem = await CartItem.create({
                 cartId: cart.id,
-                productId: productId
-            })
-
-            await newCartItem.update({
-                quantity: newCartItem.quantity + 1,
-                total: newCartItem.total + product.price
+                productId,
+                quantity,
+                total: quantity * (product.promotionPricce || product.price)
             })
 
             // Tính tổng tiền giỏ hàng
             await cart.update({
-                total: cart.total + product.price
+                total: cart.total + newCartItem.total
             })
 
-            return new SuccessResponse(res, {
+            return ApiResponse.success(res, {
                 status: 201,
-                data: newCartItem
+                data: {
+                    message: 'Thêm vào giỏ hàng thành công'
+                }
             })
         } catch (error) {
             // Xử lý lỗi nếu có
@@ -115,7 +127,7 @@ class CartController {
 
     async deleteProductFromCart(req, res, next) {
         try {
-            const { id: productId } = req.params
+            const { productId } = req.body
             const { id: userId } = req.user
 
             // Tìm giỏ hàng
@@ -127,7 +139,12 @@ class CartController {
             })
 
             if (!cart) {
-                throw new ErrorResponse(404, 'Không tìm thấy giỏ hàng')
+                return ApiResponse.error(res, {
+                    status: 404,
+                    data: {
+                        message: 'Không tìm thấy giỏ hàng'
+                    }
+                })
             }
 
             const productInCart = await CartItem.findOne({
@@ -137,13 +154,21 @@ class CartController {
                 }
             })
             if (!productInCart) {
-                throw new ErrorResponse(404, 'Không tìm thấy sản phẩm trong giỏ hàng')
+                return ApiResponse.error(res, {
+                    status: 404,
+                    data: {
+                        message: 'Không tìm thấy sản phẩm trong giỏ hàng'
+                    }
+                })
             }
             await productInCart.destroy()
 
-            return new SuccessResponse(res, {
+            return ApiResponse.success(res, {
                 status: 200,
-                data: productInCart
+                data: {
+                    productInCart,
+                    message: 'Xóa sản phẩm thành công'
+                }
             })
         } catch (err) {
             next(err)
@@ -152,9 +177,8 @@ class CartController {
 
     async updateCartItemTotalPrice(req, res, next) {
         try {
-            const { id: productId } = req.params
             const { id: userId } = req.user
-            const { quantity } = req.body
+            const { quantity, productId } = req.body
             // Tìm giỏ hàng
             const cart = await Cart.findOne({
                 where: {
@@ -164,7 +188,12 @@ class CartController {
             })
 
             if (!cart) {
-                throw new ErrorResponse(404, 'Không tìm thấy giỏ hàng')
+                return ApiResponse.error(res, {
+                    status: 404,
+                    data: {
+                        message: 'Không tìm thấy giỏ hàng'
+                    }
+                })
             }
             // Tìm sản phẩm để kiểm tra sự tồn tại
             const product = await Product.findOne({
@@ -174,7 +203,12 @@ class CartController {
             })
 
             if (!product) {
-                throw new ErrorResponse(404, 'Không tìm thấy sản phẩm')
+                return ApiResponse.error(res, {
+                    status: 404,
+                    data: {
+                        message: 'Không tìm thấy sản phẩm'
+                    }
+                })
             }
             const productInCart = await CartItem.findOne({
                 where: {
@@ -184,13 +218,18 @@ class CartController {
             })
 
             if (!productInCart) {
-                throw new ErrorResponse(404, 'Không tìm thấy sản phẩm trong giỏ hàng')
+                return ApiResponse.error(res, {
+                    status: 404,
+                    data: {
+                        message: 'Không tìm thấy sản phẩm trong giỏ hàng'
+                    }
+                })
             }
 
             // Cập nhật
             productInCart.update({
                 quantity,
-                total: quantity * product.price
+                total: quantity * (product.promotionPricce || product.price)
             })
 
             await productInCart.save()
@@ -210,7 +249,7 @@ class CartController {
                 total: totalInCart
             })
 
-            return new SuccessResponse(res, {
+            return ApiResponse.success(res, {
                 status: 200,
                 data: productInCart
             })

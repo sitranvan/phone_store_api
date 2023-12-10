@@ -1,10 +1,12 @@
 const express = require('express')
 const morgan = require('morgan')
+const cors = require('cors')
 const handleRouters = require('./routes')
 const errorMiddleware = require('./middlewares/errorMiddleware')
 const { env } = require('./config/env')
 const app = express()
 
+app.use(cors())
 app.use(express.json())
 app.use(morgan('dev'))
 

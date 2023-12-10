@@ -2,7 +2,7 @@ const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
 const User = require('../models/User')
 const ErrorResponse = require('../response/ErrorResponse')
-const SuccessResponse = require('../response/SuccessResponse')
+const ApiResponse = require('../response/ApiResponse')
 
 const generateOtp = require('../utils/generateOtp')
 const RegisterOtp = require('../models/mongo/RegisterOtp')
@@ -19,8 +19,14 @@ class AuthController {
             const isExistEmail = await User.findOne({
                 where: { email }
             })
+
+            // nên điều chỉnh lại
             if (isExistEmail) {
-                throw new ErrorResponse(409, 'Email đã tồn tại trong hệ thống')
+                return ApiResponse.error(res, {
+                    data: {
+                        email: 'Email đã tồn tại'
+                    }
+                })
             }
 
             // Mã hóa mật khẩu
@@ -40,18 +46,21 @@ class AuthController {
             })
 
             await Promise.all([
-                registerOtp.save(),
+                registerOtp.save()
                 // Gửi email
-                EmailService.sendMail({
-                    to: email,
-                    subject: 'Xác thực đăng ký',
-                    html: `Mã xác thực đăng ký: ${otp}`
-                })
+                // EmailService.sendMail({
+                //     to: email,
+                //     subject: 'Xác thực đăng ký',
+                //     html: `Mã xác thực đăng ký: ${otp}`
+                // })
             ])
 
-            return new SuccessResponse(res, {
+            return ApiResponse.success(res, {
                 status: 201,
-                data: user
+                data: {
+                    message: 'Đăng ký tài khoản thành công',
+                    user
+                }
             })
         } catch (err) {
             next(err)
@@ -67,16 +76,25 @@ class AuthController {
                 where: { email }
             })
             if (!user) {
-                throw new ErrorResponse(404, 'Người dùng không tồn tại trong hệ thống')
+                return ApiResponse.error(res, {
+                    data: {
+                        email: 'Người dùng không tồn tại trong hệ thống'
+                    }
+                })
             }
             // Kiểm tra xác thực
-            if (!user.verified) {
-                throw new ErrorResponse(401, 'Tài khoàn chưa được xác thực')
-            }
+            // if (!user.verified) {
+            //     throw new ErrorResponse(401, 'Tài khoàn chưa được xác thực')
+            // }
             // Kiểm tra mật khẩu đúng
             const isMatchPassword = bcrypt.compareSync(password, user.password)
             if (!isMatchPassword) {
-                throw new ErrorResponse(401, 'Mật khẩu không đúng')
+                //  Điều chỉnh
+                return ApiResponse.error(res, {
+                    data: {
+                        password: 'Mật khẩu chưa chính xác'
+                    }
+                })
             }
             // Tạo token
             const token = jwt.sign(
@@ -89,9 +107,16 @@ class AuthController {
                     expiresIn: '1d'
                 }
             )
-            return new SuccessResponse(res, {
+
+            const userFinal = {
+                name: user.name,
+                email: user.email
+            }
+            return ApiResponse.success(res, {
                 status: 200,
                 data: {
+                    message: 'Đăng nhập thành công',
+                    user: userFinal,
                     token
                 }
             })
@@ -126,7 +151,7 @@ class AuthController {
                 RegisterOtp.deleteOne({ email })
             ])
 
-            return new SuccessResponse(res, {
+            return new ApiResponse(res, {
                 status: 200,
                 message: 'Xác thực thành công'
             })
@@ -147,15 +172,15 @@ class AuthController {
                 otp
             })
             await Promise.all([
-                registerOtp.save(),
+                registerOtp.save()
                 // Gửi email
-                EmailService.sendMail({
-                    to: email,
-                    subject: 'Yêu cầu gửi lại mã xác thực',
-                    html: `Mã xác thực mới của bạn là: ${otp}`
-                })
+                // EmailService.sendMail({
+                //     to: email,
+                //     subject: 'Yêu cầu gửi lại mã xác thực',
+                //     html: `Mã xác thực mới của bạn là: ${otp}`
+                // })
             ])
-            return new SuccessResponse(res, {
+            return new ApiResponse(res, {
                 status: 200,
                 message: 'Gửi lại mã xác thực thành công'
             })
@@ -191,16 +216,16 @@ class AuthController {
             const link = `${env.CLIENT_URL}/forgot-password/${token}`
 
             await Promise.all([
-                forgotToken.save(),
-                // Gửi email
-                EmailService.sendMail({
-                    to: email,
-                    subject: 'Yêu cầu quên mật khẩu',
-                    html: `<h1> CLick <a href="${link}">Here</a> to reset password!</h1>`
-                })
+                forgotToken.save()
+                // // Gửi email
+                // EmailService.sendMail({
+                //     to: email,
+                //     subject: 'Yêu cầu quên mật khẩu',
+                //     html: `<h1> CLick <a href="${link}">Here</a> to reset password!</h1>`
+                // })
             ])
 
-            return new SuccessResponse(res, {
+            return new ApiResponse(res, {
                 status: 200,
                 message: 'Vui lòng kiểm tra email để khôi phục mật khẩu'
             })
@@ -216,7 +241,7 @@ class AuthController {
             if (!existedToken) {
                 throw new ErrorResponse(404, 'Token không tồn tại')
             }
-            return new SuccessResponse(res, {
+            return new ApiResponse(res, {
                 status: 200,
                 message: 'Xác thực thành công'
             })
@@ -247,7 +272,7 @@ class AuthController {
                     email
                 })
             ])
-            return new SuccessResponse(res, {
+            return new ApiResponse(res, {
                 status: 200,
                 message: 'Khôi phục mật khẩu thành công'
             })
@@ -278,16 +303,16 @@ class AuthController {
             const link = `${env.CLIENT_URL}/forgot-password/${token}`
 
             await Promise.all([
-                forgotToken.save(),
+                forgotToken.save()
                 // Gửi email
-                EmailService.sendMail({
-                    to: email,
-                    subject: 'Yêu cầu quên mật khẩu',
-                    html: `<h1> CLick <a href="${link}">Here</a> to reset password!</h1>`
-                })
+                // EmailService.sendMail({
+                //     to: email,
+                //     subject: 'Yêu cầu quên mật khẩu',
+                //     html: `<h1> CLick <a href="${link}">Here</a> to reset password!</h1>`
+                // })
             ])
 
-            return new SuccessResponse(res, {
+            return new ApiResponse(res, {
                 status: 200,
                 message: 'Vui lòng kiểm tra email để khôi phục mật khẩu'
             })

@@ -1,13 +1,13 @@
 const Category = require('../models/Category')
 const ErrorResponse = require('../response/ErrorResponse')
-const SuccessResponse = require('../response/SuccessResponse')
+const ApiResponse = require('../response/ApiResponse')
 
 class CategoryController {
     async getAllCategory(req, res, next) {
         try {
             const categories = await Category.findAll()
 
-            return new SuccessResponse(res, {
+            return new ApiResponse(res, {
                 status: 200,
                 data: categories
             })
@@ -20,7 +20,7 @@ class CategoryController {
         try {
             const category = await Category.create(req.body)
 
-            return new SuccessResponse(res, {
+            return new ApiResponse(res, {
                 status: 201,
                 data: category
             })
@@ -44,7 +44,7 @@ class CategoryController {
             category.name = name
             await category.save()
 
-            return new SuccessResponse(res, {
+            return new ApiResponse(res, {
                 status: 200,
                 data: category
             })
@@ -66,7 +66,7 @@ class CategoryController {
             }
             await category.destroy()
 
-            return new SuccessResponse(res, {
+            return new ApiResponse(res, {
                 status: 200,
                 data: category
             })

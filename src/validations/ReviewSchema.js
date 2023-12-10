@@ -33,5 +33,14 @@ class ReviewSchema {
             })
         })
     }
+
+    get getProduct() {
+        return Joi.object({
+            productId: Joi.number().required().messages({
+                'number.base': 'Mã sản phẩm phải là số nguyên',
+                'any.required': 'Mã sản phẩm trường bắt buộc'
+            })
+        })
+    }
 }
 module.exports = new ReviewSchema()

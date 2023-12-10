@@ -1,6 +1,7 @@
 const { DataTypes } = require('sequelize')
 const sequelize = require('../database/connectMysql')
 const User = require('./User')
+const Cart = require('./Cart')
 
 const Order = sequelize.define(
     'Order',
@@ -23,6 +24,14 @@ const Order = sequelize.define(
         note: {
             type: DataTypes.TEXT,
             allowNull: true
+        },
+        cartId: {
+            type: DataTypes.INTEGER,
+            allowNull: true,
+            references: {
+                model: Cart,
+                key: 'id'
+            }
         },
         canceledReason: {
             type: DataTypes.STRING,

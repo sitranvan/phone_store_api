@@ -11,6 +11,8 @@ const Order = require('./Order')
 const OrderItem = require('./OrderItem')
 const Coupon = require('./Coupon')
 const Color = require('./Color')
+const TotalStar = require('./TotalStar')
+const ProductImages = require('./ProductImages')
 
 // User-Address
 User.hasMany(Address, {
@@ -64,7 +66,8 @@ User.hasMany(Review, {
     as: 'reviews'
 })
 Review.belongsTo(User, {
-    foreignKey: 'userId'
+    foreignKey: 'userId',
+    as: 'users'
 })
 
 // User-Cart
@@ -142,4 +145,29 @@ Product.hasMany(Color, {
 })
 Color.belongsTo(Product, {
     foreignKey: 'productId'
+})
+
+// Cart-Order
+Cart.hasOne(Order, {
+    foreignKey: 'cartId'
+})
+Order.belongsTo(Cart, {
+    foreignKey: 'cartId'
+})
+
+TotalStar.belongsTo(Product, {
+    foreignKey: 'productId'
+})
+
+Product.hasMany(TotalStar, {
+    foreignKey: 'productId',
+    as: 'total_star'
+})
+
+ProductImages.belongsTo(Product, {
+    foreignKey: 'productId'
+})
+Product.hasMany(ProductImages, {
+    foreignKey: 'productId',
+    as: 'images'
 })

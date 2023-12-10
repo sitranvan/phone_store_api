@@ -2,7 +2,7 @@ const Order = require('../models/Order')
 const Product = require('../models/Product')
 const Cart = require('../models/Cart')
 const CartItem = require('../models/CartItem')
-const SuccessResponse = require('../response/SuccessResponse')
+const ApiResponse = require('../response/ApiResponse')
 const OrderItem = require('../models/OrderItem')
 const ErrorResponse = require('../response/ErrorResponse')
 class OrderController {
@@ -36,7 +36,7 @@ class OrderController {
                 })
             }
 
-            return new SuccessResponse(res, {
+            return new ApiResponse(res, {
                 status: 200,
                 data: orders
             })
@@ -92,7 +92,7 @@ class OrderController {
                 throw new ErrorResponse(404, 'Không tìm thấy đơn hàng')
             }
 
-            return new SuccessResponse(res, {
+            return new ApiResponse(res, {
                 status: 200,
                 data: order
             })
@@ -120,11 +120,13 @@ class OrderController {
             }
             // Lấy ra sản phẩm trong giỏ hàng
             const cartItems = cart.cartItems
+            const { cartId } = cart.cartItems[0]
 
             // Tạo đơn hàng
             const order = await Order.create({
                 note,
-                userId
+                userId,
+                cartId
             })
 
             await Promise.all(
@@ -144,7 +146,9 @@ class OrderController {
 
             await cart.update({ isPaid: true })
 
-            return new SuccessResponse(res, {
+            // Cập nhật số lượng bán khi đã lên đơn
+
+            return new ApiResponse(res, {
                 status: 200,
                 data: order
             })
@@ -176,7 +180,7 @@ class OrderController {
                 throw new ErrorResponse(404, 'Không tìm thấy đơn hàng')
             }
 
-            return new SuccessResponse(res, {
+            return new ApiResponse(res, {
                 status: 200,
                 message: 'Xóa đơn hàng thành công'
             })
@@ -214,7 +218,7 @@ class OrderController {
             order.cancelledBy = userId
             await order.save()
 
-            return new SuccessResponse(res, {
+            return new ApiResponse(res, {
                 status: 200,
                 message: 'Hủy đơn hàng thành công'
             })
@@ -236,29 +240,67 @@ class OrderController {
         }
         order.status = 'shipped'
         await order.save()
-        return new SuccessResponse(res, {
+        return new ApiResponse(res, {
             status: 200,
             data: order
         })
     }
     async setDeliveredOrder(req, res, next) {
-        const { id: orderId } = req.params
+        try {
+            const { id: orderId } = req.params
 
-        const order = await Order.findOne({
-            where: {
-                id: orderId
+            const order = await Order.findOne({
+                where: {
+                    id: orderId
+                }
+            })
+            if (!order) {
+                throw new ErrorResponse(404, 'Không tìm thấy đơn hàng')
             }
-        })
-        if (!order) {
-            throw new ErrorResponse(404, 'Không tìm thấy đơn hàng')
+
+            // Cập nhật lại số lượng bán
+            const cartItems = await CartItem.findAll({
+                where: {
+                    cartId: order.cartId
+                }
+            })
+
+            if (!cartItems.length) {
+                throw new ErrorResponse(404, 'Không tìm thấy sản phẩm trong giỏ hàng')
+            }
+            for (const cartItem of cartItems) {
+                const productId = cartItem.productId
+                const quantitySold = cartItem.quantity
+
+                // Lấy thông tin sản phẩm từ bảng "Product"
+                const product = await Product.findOne({
+                    where: {
+                        id: productId
+                    }
+                })
+
+                if (!product) {
+                    throw new ErrorResponse(404, `Không tìm thấy sản phẩm với ID ${productId}`)
+                }
+
+                // Cập nhật trường "sold" cho sản phẩm
+                const currentSold = product.sold || 0
+                product.sold = currentSold + quantitySold
+
+                // Lưu thông tin sản phẩm đã cập nhật
+                await product.save()
+            }
+
+            order.status = 'delivered'
+            order.deliveredAt = new Date()
+            await order.save()
+            return new ApiResponse(res, {
+                status: 200,
+                data: order
+            })
+        } catch (err) {
+            next(err)
         }
-        order.status = 'delivered'
-        order.deliveredAt = new Date()
-        await order.save()
-        return new SuccessResponse(res, {
-            status: 200,
-            data: order
-        })
     }
 }
 

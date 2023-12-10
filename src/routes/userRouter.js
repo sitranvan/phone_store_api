@@ -23,5 +23,6 @@ userRouter.patch(
     validatorMiddleware(UserSchema.updatePassword),
     UserController.updatePassword
 )
+userRouter.post('/logout', jwtAuthMiddleware, UserController.logout)
 
 module.exports = userRouter

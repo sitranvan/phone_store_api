@@ -1,13 +1,13 @@
 const Brand = require('../models/Brand')
 const ErrorResponse = require('../response/ErrorResponse')
-const SuccessResponse = require('../response/SuccessResponse')
+const ApiResponse = require('../response/ApiResponse')
 
 class BrandController {
     async getAllBrand(req, res, next) {
         try {
             const brands = await Brand.findAll()
 
-            return new SuccessResponse(res, {
+            return new ApiResponse(res, {
                 status: 200,
                 data: brands
             })
@@ -20,7 +20,7 @@ class BrandController {
         try {
             const brand = await Brand.create(req.body)
 
-            return new SuccessResponse(res, {
+            return new ApiResponse(res, {
                 status: 201,
                 data: brand
             })
@@ -44,7 +44,7 @@ class BrandController {
             brand.name = name
             await brand.save()
 
-            return new SuccessResponse(res, {
+            return new ApiResponse(res, {
                 status: 200,
                 data: brand
             })
@@ -65,7 +65,7 @@ class BrandController {
             }
             await brand.destroy()
 
-            return new SuccessResponse(res, {
+            return new ApiResponse(res, {
                 status: 200,
                 data: brand
             })

@@ -1,6 +1,7 @@
 const Review = require('../models/Review')
-const ErrorResponse = require('../response/ErrorResponse')
-const SuccessResponse = require('../response/SuccessResponse')
+const ApiResponse = require('../response/ApiResponse')
+const TotalStar = require('../models/TotalStar')
+const User = require('../models/User')
 
 class ReviewController {
     async getAllReview(req, res, next) {
@@ -11,7 +12,7 @@ class ReviewController {
                 }
             })
 
-            return new SuccessResponse(res, {
+            return new ApiResponse(res, {
                 status: 200,
                 data: reviews
             })
@@ -24,12 +25,23 @@ class ReviewController {
         try {
             const { id: productId } = req.params
             const reviews = await Review.findAll({
-                where: { productId, isHidden: false }
+                where: { productId, isHidden: false },
+                include: [
+                    {
+                        model: User,
+                        as: 'users'
+                    }
+                ]
             })
             if (reviews.length <= 0) {
-                throw new ErrorResponse(404, 'Chưa có lượt đánh giá nào')
+                return ApiResponse.error(res, {
+                    status: 404,
+                    data: {
+                        message: 'Chưa có lượt đánh giá nào'
+                    }
+                })
             }
-            return new SuccessResponse(res, {
+            return ApiResponse.success(res, {
                 status: 200,
                 data: reviews
             })
@@ -50,9 +62,29 @@ class ReviewController {
                 userId
             })
 
-            return new SuccessResponse(res, {
+            // average total_star of a product
+            const totalStar = await TotalStar.findOne({
+                where: { productId }
+            })
+
+            if (!totalStar) {
+                // insert
+                await TotalStar.create({
+                    productId,
+                    total_star: rating,
+                    total_reviewer: 1
+                })
+            } else {
+                totalStar.total_star = ((totalStar.total_star + rating) / 2).toFixed(1)
+                totalStar.total_reviewer = totalStar.total_reviewer + 1
+                await totalStar.save()
+            }
+
+            return ApiResponse.success(res, {
                 status: 201,
-                data: review
+                data: {
+                    review
+                }
             })
         } catch (err) {
             next(err)
@@ -75,7 +107,7 @@ class ReviewController {
             review.rating = rating
 
             await review.save()
-            return new SuccessResponse(res, {
+            return new ApiResponse(res, {
                 status: 200,
                 data: review
             })
@@ -98,7 +130,7 @@ class ReviewController {
             review.isHidden = true
 
             await review.save()
-            return new SuccessResponse(res, {
+            return new ApiResponse(res, {
                 status: 200,
                 data: review
             })
@@ -119,7 +151,7 @@ class ReviewController {
                 throw new ErrorResponse(404, 'Không tìm thấy đánh giá')
             }
             await review.destroy()
-            return new SuccessResponse(res, {
+            return new ApiResponse(res, {
                 status: 200,
                 data: review
             })

@@ -1,6 +1,6 @@
 const { Sequelize } = require('sequelize')
 const Coupon = require('../models/Coupon')
-const SuccessResponse = require('../response/SuccessResponse')
+const ApiResponse = require('../response/ApiResponse')
 const ErrorResponse = require('../response/ErrorResponse')
 const Cart = require('../models/Cart')
 
@@ -17,7 +17,7 @@ class CouponController {
                 }
             })
 
-            return new SuccessResponse(res, {
+            return new ApiResponse(res, {
                 status: 200,
                 data: validCoupons
             })
@@ -50,7 +50,7 @@ class CouponController {
                 startDate: new Date(),
                 endDate
             })
-            return new SuccessResponse(res, {
+            return new ApiResponse(res, {
                 status: 201,
                 data: newCoupon
             })
@@ -78,7 +78,7 @@ class CouponController {
             coupon.description = description
             // Ngày hết hạn ngày bắt đầu xử lý sau
             await coupon.save()
-            return new SuccessResponse(res, {
+            return new ApiResponse(res, {
                 status: 200,
                 data: coupon
             })
@@ -101,7 +101,7 @@ class CouponController {
             }
 
             await coupon.destroy()
-            return new SuccessResponse(res, {
+            return new ApiResponse(res, {
                 status: 200,
                 data: coupon
             })
@@ -143,7 +143,7 @@ class CouponController {
                 cart.total = finalPrice
                 await cart.save()
             }
-            return new SuccessResponse(res, {
+            return new ApiResponse(res, {
                 status: 200,
                 data: cart
             })
