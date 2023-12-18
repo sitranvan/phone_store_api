@@ -8,6 +8,7 @@ const CouponSchema = require('../validations/CouponSchema')
 const couponRouter = Router()
 
 couponRouter.get('/', jwtAuthMiddleware, authorizedMiddleware('customer', 'owner'), CouponController.getAllCoupon)
+couponRouter.get('/:id', jwtAuthMiddleware, authorizedMiddleware('customer', 'owner'), CouponController.getCoupon)
 couponRouter.post(
     '/',
     jwtAuthMiddleware,

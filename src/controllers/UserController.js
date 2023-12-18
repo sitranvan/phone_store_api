@@ -24,9 +24,11 @@ class UserController {
                     }
                 ]
             })
-            return new ApiResponse(res, {
+            return ApiResponse.success(res, {
                 success: true,
-                data: user
+                data: {
+                    profile: user
+                }
             })
         } catch (err) {
             next(err)
@@ -35,7 +37,7 @@ class UserController {
 
     async updateMe(req, res, next) {
         try {
-            const { province, district, village, shortDescription, avatar } = req.body
+            const { name, phone, province, district, village, shortDescription } = req.body
 
             const { id: userId } = req.user
             const existedAddress = await Address.findOne({
@@ -43,23 +45,41 @@ class UserController {
                     userId
                 }
             })
+
             if (existedAddress) {
-                // Cập nhật
-                existedAddress.province = province
-                existedAddress.district = district
-                existedAddress.village = village
-                existedAddress.shortDescription = shortDescription
+                // Cập nhật chỉ những trường có giá trị mới được nhập
+
+                existedAddress.phone = phone || existedAddress.phone
+                existedAddress.province = province || existedAddress.province
+                existedAddress.district = district || existedAddress.district
+                existedAddress.village = village || existedAddress.village
+                existedAddress.shortDescription = shortDescription || existedAddress.shortDescription
+
                 await existedAddress.save()
             } else {
-                // Tạo mới
+                // Tạo mới nếu chưa có thông tin địa chỉ
                 await Address.create({
                     userId,
+                    phone,
                     province,
                     district,
                     village,
                     shortDescription
                 })
             }
+            if (name !== undefined && name !== null && name !== '') {
+                await User.update(
+                    {
+                        name
+                    },
+                    {
+                        where: {
+                            id: userId
+                        }
+                    }
+                )
+            }
+
             if (req.file) {
                 const { filename } = req.file
                 await User.update(
@@ -73,6 +93,7 @@ class UserController {
                     }
                 )
             }
+
             const user = await User.findByPk(userId, {
                 include: [
                     {
@@ -81,9 +102,13 @@ class UserController {
                     }
                 ]
             })
-            return new ApiResponse(res, {
+
+            return ApiResponse.success(res, {
                 status: 200,
-                data: user
+                data: {
+                    user,
+                    message: 'Cập nhật thông tin thành công'
+                }
             })
         } catch (err) {
             next(err)
@@ -99,10 +124,20 @@ class UserController {
             const isMatch = bcrypt.compareSync(oldPassword, user.password)
 
             if (!isMatch) {
-                throw new ErrorResponse(400, 'Mật khẩu cũ không chính xác')
+                return ApiResponse.error(res, {
+                    status: 400,
+                    data: {
+                        oldPassword: 'Mật khẩu cũ không chính xác'
+                    }
+                })
             }
             if (oldPassword === newPassword) {
-                throw new ErrorResponse(400, 'Mật khẩu mới phải khác mật khẩu cũ')
+                return ApiResponse.error(res, {
+                    status: 400,
+                    data: {
+                        newPassword: 'Mật khẩu mới phải khác mật khẩu cũ'
+                    }
+                })
             }
 
             const hashedPassword = bcrypt.hashSync(newPassword)
@@ -110,9 +145,11 @@ class UserController {
             user.password = hashedPassword
             await user.save()
 
-            return new ApiResponse(res, {
+            return ApiResponse.success(res, {
                 status: 200,
-                message: 'Cập nhật mật khẩu thành công'
+                data: {
+                    message: 'Cập nhật mật khẩu thành công'
+                }
             })
         } catch (err) {
             next(err)

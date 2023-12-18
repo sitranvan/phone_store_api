@@ -36,9 +36,11 @@ class OrderController {
                 })
             }
 
-            return new ApiResponse(res, {
+            return ApiResponse.success(res, {
                 status: 200,
-                data: orders
+                data: {
+                    orders
+                }
             })
         } catch (error) {
             next(error)
@@ -116,7 +118,12 @@ class OrderController {
             })
 
             if (!cart) {
-                throw new ErrorResponse(404, 'Bạn chưa có sản phẩm nào trong giỏ hàng')
+                return ApiResponse.error(res, {
+                    status: 404,
+                    data: {
+                        message: 'Bạn chưa có sản phẩm nào trong giỏ hàng'
+                    }
+                })
             }
             // Lấy ra sản phẩm trong giỏ hàng
             const cartItems = cart.cartItems
@@ -126,7 +133,8 @@ class OrderController {
             const order = await Order.create({
                 note,
                 userId,
-                cartId
+                cartId,
+                createdAt: new Date()
             })
 
             await Promise.all(
@@ -148,9 +156,12 @@ class OrderController {
 
             // Cập nhật số lượng bán khi đã lên đơn
 
-            return new ApiResponse(res, {
+            return ApiResponse.success(res, {
                 status: 200,
-                data: order
+                data: {
+                    order,
+                    message: 'Đặt hàng thành công'
+                }
             })
         } catch (err) {
             next(err)

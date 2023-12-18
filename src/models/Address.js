@@ -9,6 +9,11 @@ const Address = sequelize.define(
             autoIncrement: true,
             primaryKey: true
         },
+        phone: {
+            type: DataTypes.STRING,
+            allowNull: true,
+            defaultValue: null
+        },
         province: {
             type: DataTypes.STRING,
             allowNull: true,

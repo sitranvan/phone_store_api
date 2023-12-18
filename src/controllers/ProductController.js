@@ -188,12 +188,13 @@ class ProductController {
 
     async createProduct(req, res, next) {
         try {
-            const { name, description, specification, price, promotionPrice, categoryId, brandId, colors } = req.body
+            const { name, description, price, promotionPrice, categoryId, brandId } = req.body
 
             if (promotionPrice > price) {
                 return ApiResponse.error(res, {
+                    status: 400,
                     data: {
-                        message: 'Giá khuyến mãi phải thấp hơn giá gốc'
+                        promotionPrice: 'Giá khuyến mãi phải thấp hơn giá gốc'
                     }
                 })
             }
@@ -206,7 +207,6 @@ class ProductController {
             const product = await Product.create({
                 name,
                 description,
-                specification,
                 photo,
                 price,
                 promotionPrice,
@@ -214,22 +214,23 @@ class ProductController {
                 brandId
             })
             // Thêm mảng màu vào bảng Color
-            if (colors && colors.length > 0) {
-                const colorPromises = colors.map((color) => {
-                    return Color.create({
-                        productId: product.id,
-                        name: color
-                    })
-                })
+            // if (colors && colors.length > 0) {
+            //     const colorPromises = colors.map((color) => {
+            //         return Color.create({
+            //             productId: product.id,
+            //             name: color
+            //         })
+            //     })
 
-                // Chờ cho tất cả các promise hoàn thành
-                await Promise.all(colorPromises)
-            }
+            //     // Chờ cho tất cả các promise hoàn thành
+            //     await Promise.all(colorPromises)
+            // }
 
             return ApiResponse.success(res, {
                 status: 201,
                 data: {
-                    product
+                    product,
+                    message: 'Thêm sản phẩm thành công'
                 }
             })
         } catch (err) {
@@ -238,7 +239,7 @@ class ProductController {
     }
     async updateProduct(req, res, next) {
         try {
-            const { name, description, specification, price, categoryId, brandId, colors } = req.body
+            const { name, description, specification, price, categoryId, brandId, promotionPrice } = req.body
             const { id: productId } = req.params
             const product = await Product.findByPk(productId)
 
@@ -253,40 +254,40 @@ class ProductController {
             let photo = ''
             if (req.file) {
                 photo = req.file.filename
+                product.photo = photo
             }
 
-            await product.update({
-                name,
-                description,
-                specification,
-                photo,
-                price,
-                categoryId,
-                brandId
-            })
-
-            await Color.destroy({
-                where: {
-                    productId: productId
-                }
-            })
+            product.name = name
+            product.description = description
+            product.specification = specification
+            product.price = price
+            product.categoryId = categoryId
+            product.brandId = brandId
+            product.promotionPrice = promotionPrice
+            await product.save()
+            // await Color.destroy({
+            //     where: {
+            //         productId: productId
+            //     }
+            // })
 
             // Sau đó, thêm mới các màu từ mảng mới
-            if (colors && colors.length > 0) {
-                const colorPromises = colors.map((color) => {
-                    return Color.create({
-                        productId: productId,
-                        name: color
-                    })
-                })
+            // if (colors && colors.length > 0) {
+            //     const colorPromises = colors.map((color) => {
+            //         return Color.create({
+            //             productId: productId,
+            //             name: color
+            //         })
+            //     })
 
-                // Chờ cho tất cả các promise hoàn thành
-                await Promise.all(colorPromises)
-            }
+            //     // Chờ cho tất cả các promise hoàn thành
+            //     await Promise.all(colorPromises)
+            // }
             return ApiResponse.success(res, {
                 status: 200,
                 data: {
-                    product
+                    product,
+                    message: 'Cập nhật sản phẩm thành công'
                 }
             })
         } catch (err) {
@@ -313,7 +314,8 @@ class ProductController {
             return ApiResponse.success(res, {
                 status: 200,
                 data: {
-                    product
+                    product,
+                    message: 'Xóa sản phẩm thành công'
                 }
             })
         } catch (err) {

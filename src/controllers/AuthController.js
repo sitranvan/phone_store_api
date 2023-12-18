@@ -110,7 +110,8 @@ class AuthController {
 
             const userFinal = {
                 name: user.name,
-                email: user.email
+                email: user.email,
+                avatar: user.avatar
             }
             return ApiResponse.success(res, {
                 status: 200,

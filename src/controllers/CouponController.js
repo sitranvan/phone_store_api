@@ -25,6 +25,30 @@ class CouponController {
             next(err)
         }
     }
+    async getCoupon(req, res, next) {
+        try {
+            const currentDate = new Date()
+            const { id: code } = req.params
+
+            const validCoupons = await Coupon.findOne({
+                where: {
+                    endDate: {
+                        [Sequelize.Op.gte]: currentDate // Ngày kết thúc lớn hơn hoặc bằng ngày hiện tại
+                    },
+                    code
+                }
+            })
+
+            return ApiResponse.success(res, {
+                status: 200,
+                data: {
+                    coupon: validCoupons
+                }
+            })
+        } catch (err) {
+            next(err)
+        }
+    }
 
     async createCoupon(req, res, next) {
         try {
@@ -121,20 +145,35 @@ class CouponController {
             })
 
             if (!coupon) {
-                throw new ErrorResponse(400, 'Không tìm thấy khuyến mãi')
+                return ApiResponse.error(res, {
+                    status: 400,
+                    data: {
+                        message: 'Mã khuyến mãi không hợp lệ'
+                    }
+                })
             }
 
             // Tìm ra giỏ hàng hiện tại
             const cart = await Cart.findOne({
                 where: {
                     userId,
-                    isPaid: false
+                    isPaid: false,
+                    couponId: null
                 }
             })
+            if (!cart) {
+                return ApiResponse.error(res, {
+                    status: 400,
+                    data: {
+                        message: 'Mỗi giỏ hàng chỉ được áp dụng một mã'
+                    }
+                })
+            }
 
             if (coupon.type === 'money') {
                 const finalPrice = cart.total - coupon.value
                 cart.total = finalPrice
+                cart.couponId = coupon.id
                 await cart.save()
             }
 
@@ -143,9 +182,12 @@ class CouponController {
                 cart.total = finalPrice
                 await cart.save()
             }
-            return new ApiResponse(res, {
+            return ApiResponse.success(res, {
                 status: 200,
-                data: cart
+                data: {
+                    cart,
+                    message: 'Thêm mã giảm giá thành công!'
+                }
             })
         } catch (err) {
             next(err)
