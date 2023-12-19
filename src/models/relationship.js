@@ -117,7 +117,8 @@ User.hasMany(Order, {
 })
 
 Order.belongsTo(User, {
-    foreignKey: 'userId'
+    foreignKey: 'userId',
+    as: 'users'
 })
 
 //

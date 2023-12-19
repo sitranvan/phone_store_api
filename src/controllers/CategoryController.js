@@ -5,7 +5,9 @@ const ApiResponse = require('../response/ApiResponse')
 class CategoryController {
     async getAllCategory(req, res, next) {
         try {
-            const categories = await Category.findAll()
+            const categories = await Category.findAll({
+                order: [['createdAt', 'DESC']]
+            })
 
             return new ApiResponse(res, {
                 status: 200,
@@ -16,13 +18,36 @@ class CategoryController {
         }
     }
 
+    async getCategory(req, res, next) {
+        try {
+            const { id } = req.params
+            const category = await Category.findByPk(id)
+            if (!category) {
+                return ApiResponse.error(res, {
+                    status: 404,
+                    data: {
+                        message: 'Không tìm thấy'
+                    }
+                })
+            }
+            return ApiResponse.success(res, {
+                status: 200,
+                data: category
+            })
+        } catch (err) {
+            next(err)
+        }
+    }
     async createCategory(req, res, next) {
         try {
             const category = await Category.create(req.body)
 
-            return new ApiResponse(res, {
+            return ApiResponse.success(res, {
                 status: 201,
-                data: category
+                data: {
+                    category,
+                    message: 'Tạo loại sản phẩm thành công'
+                }
             })
         } catch (err) {
             next(err)
@@ -39,14 +64,20 @@ class CategoryController {
                 }
             })
             if (!category) {
-                throw new ErrorResponse(404, 'Không tìm thấy danh mục')
+                return ApiResponse.error(res, {
+                    status: 404,
+                    message: 'Không tìm thấy danh mục'
+                })
             }
             category.name = name
             await category.save()
 
-            return new ApiResponse(res, {
+            return ApiResponse.success(res, {
                 status: 200,
-                data: category
+                data: {
+                    category,
+                    message: 'Cập nhật loại sản phẩm thành công'
+                }
             })
         } catch (err) {
             next(err)
@@ -62,13 +93,21 @@ class CategoryController {
                 }
             })
             if (!category) {
-                throw new ErrorResponse(404, 'Không tìm thấy danh mục')
+                return ApiResponse.error(res, {
+                    status: 404,
+                    data: {
+                        message: 'Không tìm thấy danh mục'
+                    }
+                })
             }
             await category.destroy()
 
-            return new ApiResponse(res, {
+            return ApiResponse.success(res, {
                 status: 200,
-                data: category
+                data: {
+                    category,
+                    message: 'Xóa sản phẩm thành công'
+                }
             })
         } catch (err) {
             next(err)

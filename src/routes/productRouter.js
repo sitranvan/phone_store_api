@@ -10,26 +10,21 @@ productRouter.get('/', ProductController.getAllProduct)
 productRouter.get('/:id', ProductController.getDetailProduct)
 productRouter.post(
     '/',
-    // jwtAuthMiddleware,
+    jwtAuthMiddleware,
 
     uploadMiddleware.single('photo'),
-    // authorizedMiddleware('owner'),
+    authorizedMiddleware('owner'),
     ProductController.createProduct
 )
 
 productRouter.patch(
     '/:id',
-    // jwtAuthMiddleware,
+    jwtAuthMiddleware,
     uploadMiddleware.single('photo'),
-    // authorizedMiddleware('owner'),
+    authorizedMiddleware('owner'),
     ProductController.updateProduct
 )
 
-productRouter.delete(
-    '/:id',
-    // jwtAuthMiddleware,
-    // authorizedMiddleware('owner'),
-    ProductController.deleteProduct
-)
+productRouter.delete('/:id', jwtAuthMiddleware, authorizedMiddleware('owner'), ProductController.deleteProduct)
 
 module.exports = productRouter

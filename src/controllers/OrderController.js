@@ -5,10 +5,12 @@ const CartItem = require('../models/CartItem')
 const ApiResponse = require('../response/ApiResponse')
 const OrderItem = require('../models/OrderItem')
 const ErrorResponse = require('../response/ErrorResponse')
+const User = require('../models/User')
 class OrderController {
     async getAllOrder(req, res, next) {
         try {
             const { id: userId, role } = req.user
+
             let orders = []
             if (role === 'customer') {
                 orders = await Order.findAll({
@@ -31,6 +33,11 @@ class OrderController {
                         {
                             model: Product,
                             as: 'products'
+                        },
+                        {
+                            model: User, // Tham chiếu đến mô hình User
+                            attributes: ['id', 'name', 'email'], // Chọn các trường của User bạn muốn include
+                            as: 'users' // Đặt tên alias cho User trong kết quả trả về
                         }
                     ]
                 })
@@ -229,9 +236,11 @@ class OrderController {
             order.cancelledBy = userId
             await order.save()
 
-            return new ApiResponse(res, {
+            return ApiResponse.success(res, {
                 status: 200,
-                message: 'Hủy đơn hàng thành công'
+                data: {
+                    message: 'Cập nhật đơn hàng thành công'
+                }
             })
         } catch (err) {
             next(err)
@@ -251,9 +260,11 @@ class OrderController {
         }
         order.status = 'shipped'
         await order.save()
-        return new ApiResponse(res, {
+        return ApiResponse.success(res, {
             status: 200,
-            data: order
+            data: {
+                message: 'Cập nhật đơn hàng thành công'
+            }
         })
     }
     async setDeliveredOrder(req, res, next) {
@@ -305,9 +316,11 @@ class OrderController {
             order.status = 'delivered'
             order.deliveredAt = new Date()
             await order.save()
-            return new ApiResponse(res, {
+            return ApiResponse.success(res, {
                 status: 200,
-                data: order
+                data: {
+                    message: 'Cập nhật đơn hàng thành công'
+                }
             })
         } catch (err) {
             next(err)

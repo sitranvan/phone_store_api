@@ -8,6 +8,7 @@ const BrandSchema = require('../validations/BrandSchema')
 const brandRouter = Router()
 
 brandRouter.get('/', BrandController.getAllBrand)
+brandRouter.get('/:id', BrandController.getBrand)
 
 brandRouter.post(
     '/',

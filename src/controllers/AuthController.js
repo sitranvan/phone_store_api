@@ -103,15 +103,16 @@ class AuthController {
                 },
                 env.SECRET_KEY,
                 {
-                    // expiresIn 1 days
-                    expiresIn: '1d'
+                    // expiresIn 5 days
+                    expiresIn: '5d'
                 }
             )
 
             const userFinal = {
                 name: user.name,
                 email: user.email,
-                avatar: user.avatar
+                avatar: user.avatar,
+                role: user.role
             }
             return ApiResponse.success(res, {
                 status: 200,

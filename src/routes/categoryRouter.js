@@ -8,6 +8,9 @@ const CategorySchema = require('../validations/CategorySchema')
 const categoryRouter = Router()
 
 categoryRouter.get('/', CategoryController.getAllCategory)
+
+categoryRouter.get('/:id', CategoryController.getCategory)
+
 categoryRouter.post(
     '/',
     jwtAuthMiddleware,

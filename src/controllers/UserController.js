@@ -5,8 +5,36 @@ const User = require('../models/User')
 const ErrorResponse = require('../response/ErrorResponse')
 const ApiResponse = require('../response/ApiResponse')
 const { env } = require('../config/env')
+const { Op } = require('sequelize')
 
 class UserController {
+    async getAll(req, res, next) {
+        try {
+            const { id: userId, role } = req.user
+
+            let users = []
+
+            if (role === 'owner') {
+                users = await User.findAll({
+                    where: {
+                        role: {
+                            [Op.notIn]: ['owner', 'admin']
+                        }
+                    }
+                })
+            }
+
+            return ApiResponse.success(res, {
+                status: 200,
+                data: {
+                    users
+                }
+            })
+        } catch (error) {
+            next(error)
+        }
+    }
+
     async getMe(req, res, next) {
         try {
             const { id: userId } = req.user
@@ -29,6 +57,26 @@ class UserController {
                 data: {
                     profile: user
                 }
+            })
+        } catch (err) {
+            next(err)
+        }
+    }
+    async getUser(req, res, next) {
+        try {
+            const { id: userId } = req.params
+            const user = await User.findByPk(userId)
+            if (!user) {
+                return ApiResponse.error(res, {
+                    status: 404,
+                    data: {
+                        message: 'Không tìm thấy user'
+                    }
+                })
+            }
+            return ApiResponse.success(res, {
+                status: 200,
+                data: user
             })
         } catch (err) {
             next(err)
